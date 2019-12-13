@@ -1,0 +1,52 @@
+# Uncomment the next line to define a global platform for your project
+platform :ios, '9.0'
+
+target 'WordDiagnosticsApp' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  # use_frameworks!
+  pod 'Firebase/Core', '~> 5.20.1'
+  pod 'Firebase/Messaging', '~> 5.20.1'
+  # pod 'React', :path => '../node_modules/react-native', :subspecs => [    
+  #   'RCTPushNotification',
+  # ]
+  # Pods for WordDiagnosticsApp
+  rn_path = '../node_modules/react-native'
+
+  pod 'yoga', path: "#{rn_path}/ReactCommon/yoga"
+  pod 'React', path: rn_path, subspecs: [
+    'Core',
+    'CxxBridge',
+    'DevSupport',
+    'RCTActionSheet',
+    'RCTAnimation',
+    'RCTGeolocation',
+    'RCTImage',
+    'RCTLinkingIOS',
+    'RCTNetwork',
+    'RCTSettings',
+    'RCTText',
+    'RCTVibration',
+    'RCTWebSocket',
+  ]
+  pod 'Folly', :podspec => "#{rn_path}/third-party-podspecs/Folly.podspec"
+  # pod 'RNFirebase', :path => '../node_modules/react-native-firebase/ios'
+  # pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
+  # post_install do |installer|
+  #   rnfirebase = installer.pods_project.targets.find { |target| target.name == 'RNFirebase' }
+  #   rnfirebase.build_configurations.each do |config|
+  #     config.build_settings['HEADER_SEARCH_PATHS'] = '$(inherited) ${PODS_ROOT}/Headers/Public/**'
+  #   end
+  # end
+  # pod 'lottie-ios', :path => '../node_modules/lottie-ios'
+
+  # pod 'lottie-react-native', :path => '../node_modules/lottie-react-native'
+
+  post_install do |installer|
+    installer.pods_project.targets.each do |target|
+      if target.name == "React"
+        target.remove_from_project
+      end
+    end
+  end
+
+end

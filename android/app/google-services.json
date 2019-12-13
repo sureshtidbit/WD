@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "459633052492",
+    "firebase_url": "https://wd-app-da613.firebaseio.com",
+    "project_id": "wd-app-da613",
+    "storage_bucket": "wd-app-da613.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:459633052492:android:f706670e41595552",
+        "android_client_info": {
+          "package_name": "com.wdproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "459633052492-t0tjffp84eruqg8h18sjv5uqiupdj4pr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6MWfjy9cskXv-8lWrPb3lvbtOsELjBAw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "459633052492-t0tjffp84eruqg8h18sjv5uqiupdj4pr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "459633052492-druhpmgc8pfn1397851d25v9f1f4l5ss.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "wdproject.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
