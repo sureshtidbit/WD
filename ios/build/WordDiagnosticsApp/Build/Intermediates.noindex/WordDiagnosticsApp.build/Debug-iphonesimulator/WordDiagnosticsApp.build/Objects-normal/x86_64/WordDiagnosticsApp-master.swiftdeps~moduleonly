@@ -1,5 +1,0 @@
-version: "Apple Swift version 5.1 (swiftlang-1100.0.270.13 clang-1100.0.33.7)"
-options: "53963981c94d51a29dbe517ce1191966"
-build_time: [1575537619, 191070000]
-inputs:
-  "/Users/macbook1/Desktop/NewWordDiagnostics/ios/File.swift": [1575536997, 946143472]
