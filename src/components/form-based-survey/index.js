@@ -2,61 +2,42 @@ import React, { Component } from 'react';
 import {
     StyleSheet,
     View,
-    ScrollView,
-    Button,
     ActivityIndicator,
     TouchableOpacity,
     Text,
     Dimensions,
-    Alert,
     BackHandler,
     AsyncStorage,
     Modal, Platform,
     YellowBox,
-    Image,
-    KeyboardAvoidingView,
     Keyboard,
-    TouchableHighlight,
     NetInfo,
-    StatusBar,
-    ProgressBarAndroid,
-    ProgressViewIOS
+    StatusBar
 } from 'react-native';
-import AnimatedLoader from "react-native-animated-loader";
-import { CirclesLoader, PulseLoader, TextLoader, DotsLoader } from 'react-native-indicator';
-
-import { Footer, FooterTab, Icon, Title } from 'native-base';
-// import NetInfo from "@react-native-community/netinfo";
+import { DotsLoader } from 'react-native-indicator';
 import { Snackbar } from 'react-native-paper';
-
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Dropdown } from 'react-native-material-dropdown';
 import Toast from 'react-native-simple-toast';
-// import Modal from "react-native-modal";
-import QuestionImage from './form-cards/QuestionImage'
 import {
-    withNavigation, NavigationActions
+    withNavigation
 } from 'react-navigation';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-
-import Toaster, { ToastStyles } from 'react-native-toaster'
+import Toaster from 'react-native-toaster'
 import Header from '../header/app_header';
 import TextInputCard from './form-cards/textInputCard';
 import RadioCard from './form-cards/radioCard';
 import IntegerTextInputCard from './form-cards/IntegerTextInputCard';
 import CheckboxCard from './form-cards/checkBoxCard';
-import DropDownCard from './form-cards/dropDownCard';
 import VoiceButton from './form-cards/voicerecord'
 import ErrorAlerts from '../alertMessage/errorAlert'
 import RNFetchBlob from 'react-native-fetch-blob'
 import { API } from '../../auth/index'
 import { CongratulationFlag, SurveyResponse, ReTake } from '../../redux/surveyAction'
 import { Fonts } from '../../utils/fonts'
-import LottieView from 'lottie-react-native';
 import DisplayTextComponent from './form-cards/displayText'
 var firstLoop = -1;
 var secondLoop = -1;
@@ -67,24 +48,20 @@ var CurrentNextRadioQ = -1;
 var flag = 0;
 var loopFlag = 0;
 var goBackWord = 0
-var CurrentloopFlag = 0;
 var currentLoop = 0;
 var CurrentSecondLoop = -1;
 var QLength = 0;
-var RadioLength = 0;
 var SubQStatus = -1;
 var QType = "";
 var QuestionType = ""
 var errorCode = -2
 var SurveyLength = 0
 var goBack = 0
-var breakLoop = 0
 var GroupProperty = []
 var ValidationProperties = []
 var QuestionID = 0
-var ValidationTracker = 0
-class FormBasedSurvey extends Component {
 
+class FormBasedSurvey extends Component {
     constructor() {
         super();
         YellowBox.ignoreWarnings(
@@ -115,10 +92,8 @@ class FormBasedSurvey extends Component {
             progressWithOnComplete: 0,
             progressCustomized: 0,
             PregresPer: 0,
-            // TrackNextPrev: 0,
             ModalVisibleStatus: false,
             OfflineModal: false,
-            // NextPrevToggle: 0,
             inCompleteRespose: 0,
             IsInternetConnected: false,
             IsOnline: false,
@@ -141,7 +116,6 @@ class FormBasedSurvey extends Component {
         this.isValid = -1
         this.UserSurveyResponse = {};
         this.BreakPoint = -5;
-        // this.GroupProperty = []
         this.SectionImage = []
         this.Surveytitle = null;
         this.survey_id = ""
@@ -152,20 +126,20 @@ class FormBasedSurvey extends Component {
 
     push(item) {
         this.QuestionStack.push(item)
-        console.log('push===', this.QuestionStack);
     }
+
     pop() {
         return this.QuestionStack.pop()
     }
+
     size() {
         return this.QuestionStack.length
     }
+
     handleBackButton = () => {
         this.isComplete = 0
-        console.log(this.state.Internet)
         if (this.state.Internet) {
             this.ModalText = 'Do you want to save this survey?'
-            // this.ModalText= 'Do you want to save the response? You are currently offline. Your responses will be saved locally and submitted when you have internet connection.'
             this.setState({ OfflineModal: false })
             this.setState({ ModalVisibleStatus: true })
         } else {
@@ -173,9 +147,9 @@ class FormBasedSurvey extends Component {
             this.setState({ ModalVisibleStatus: false })
             this.setState({ OfflineModal: true })
         }
-
         return true;
     };
+
     NoPause() {
         this.setState({ ModalVisibleStatus: false, YesLoader: false })
         this.setState({ OfflineModal: false })
@@ -187,11 +161,11 @@ class FormBasedSurvey extends Component {
         AsyncStorage.removeItem('SurveyPatientInfo');
         this.props.navigation.navigate('Login')
     }
+
     CheckConnectivity = () => {
         // For Android devices
         if (Platform.OS === "android") {
             NetInfo.isConnected.fetch().then(isConnected => {
-                console.log(isConnected)
                 if (isConnected) {
                     this.setState({ IsOnline: true })
                     this.setState({ IsInternetConnected: false })
@@ -208,7 +182,6 @@ class FormBasedSurvey extends Component {
                 this.handleFirstConnectivityChange
             );
             NetInfo.isConnected.fetch().then(isConnected => {
-                console.log(isConnected)
                 if (isConnected) {
                     this.setState({ IsOnline: true })
                     this.setState({ IsInternetConnected: false })
@@ -229,17 +202,14 @@ class FormBasedSurvey extends Component {
         if (isConnected) {
             this.setState({ IsOnline: true })
             this.setState({ IsInternetConnected: false })
-            // Alert.alert("You are offline!");
         } else {
             this.setState({ IsInternetConnected: true })
             this.setState({ IsOnline: false })
-            // Alert.alert("You are online!");
         }
         this.setState({ Internet: isConnected })
     };
 
     handleConnectionChange = connectionInfo => {
-        console.log("connection info: ", connectionInfo);
         if (Platform.OS === "android") {
             NetInfo.isConnected.fetch().then(isConnected => {
                 this.setState({ Internet: isConnected })
@@ -259,6 +229,7 @@ class FormBasedSurvey extends Component {
             );
         }
     };
+
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
         NetInfo.isConnected.removeEventListener(
@@ -270,23 +241,23 @@ class FormBasedSurvey extends Component {
         this.keyboardWillShowListener.remove();
         this.keyboardWillHideListener.remove();
     }
+
     _keyboardDidShow(e) {
         this.setState({ HideFooter: false })
-        console.log('_keyboardDidShow')
     }
 
     _keyboardDidHide() {
         this.setState({ HideFooter: true })
-        console.log('_keyboardDidHide')
     }
+
     _keyboardWillShow() {
         this.setState({ HideFooter: false })
-        console.log('_keyboardWillShow')
     }
+
     _keyboardWillHide() {
         this.setState({ HideFooter: true })
-        console.log('_keyboardWillHide')
     }
+    
     componentDidMount() {
         this.CheckConnectivity();
         this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this));
@@ -310,7 +281,6 @@ class FormBasedSurvey extends Component {
         this.survey_id = id
         this.survey_token = this.props.SurveyRedux.survey_token
         this.client_id = this.props.SurveyRedux.client_id
-        console.log('survey is', id, this.props.SurveyRedux.client_id, this.props.SurveyRedux.ReTake)
         if (this.props.SurveyRedux.ReTake == 1) {
             this.RetakeSameSurveyAgain(this.props.SurveyRedux.ReTakeAPIResponse)
         } else {
@@ -322,16 +292,6 @@ class FormBasedSurvey extends Component {
         AsyncStorage.getItem('SurveyAuthToken').then((value) => {
             var token = 'Bearer ' + value
             let url = API + 'surveys?clientId=' + clientId
-            // fetch('http://stage-manager.worddiagnostics.com/api/surveys?clientId=' + clientId, {
-            //     method: 'GET',
-            //     headers: {
-            //         'Authorization': token,
-            //         'Cache-Control': 'no-cache',
-            //         'Accept': 'application/json',
-            //         'Content-Type': 'application/x-www-form-urlencoded'
-            //     },
-            // }).then((response) => response.json())
-            //     .then((responseData) => {
             RNFetchBlob.config({
                 trusty: true
             }).fetch('GET', url, {
@@ -342,11 +302,10 @@ class FormBasedSurvey extends Component {
             })
                 .then((response) => response.json())
                 .then((responseData) => {
-                    console.log(responseData, 'data= PendingSurvey')
+                    console.log(responseData, 'data=> PendingSurvey')
                     if (responseData.status == 'ok') {
                         if (responseData.result.length > 0) {
                             var FilterSurvey = responseData.result.filter(item => item.survey_token == survey_token)
-                            console.log(FilterSurvey, 'FilterSurvey', Object.keys(FilterSurvey[0].inCompleteRespose).length)
                             if (FilterSurvey[0].inCompleteRespose !== undefined && FilterSurvey[0].inCompleteRespose !== null) {
                                 if (Object.keys(FilterSurvey[0].inCompleteRespose).length > 0) {
                                     this.setState({ inCompleteRespose: 1 })
@@ -367,9 +326,8 @@ class FormBasedSurvey extends Component {
                 })
         })
     }
+
     RetakeSameSurveyAgain(responseJson) {
-        console.log('ReTakeAPIResponse', responseJson)
-        ValidationTracker = 0
         this.UserSurveyResponse = {};
         GroupProperty = responseJson.result.groupProperties;
         ValidationProperties = responseJson.result.validationProperties;
@@ -380,27 +338,16 @@ class FormBasedSurvey extends Component {
         this.ArrayInitialize(responseJson.result.questionnaire.section.length)
         this.setState({ loader: false })
     }
+
     getSurveys(survey_id, PausedData, clientId) {
-        console.log('2')
         let APIURL = null
         if (this.props.SurveyRedux.ReTake == 1) {
             APIURL = API + 'survey-detail?survey_id=' + survey_id + "&clientId=" + clientId
         } else {
             APIURL = API + 'survey-detail?survey_id=' + survey_id + "&clientId=" + clientId
         }
-
         AsyncStorage.getItem('SurveyAuthToken').then((value) => {
             var token = 'Bearer ' + value
-            // fetch(APIURL, {
-            //     method: 'GET',
-            //     headers: {
-            //         'Authorization': token,
-            //         'Cache-Control': 'no-cache',
-            //         'Accept': 'application/json',
-            //         'Content-Type': 'application/x-www-form-urlencoded'
-            //     },
-            // }).then((response) => response.json()).then(responseJson => {
-
             RNFetchBlob.config({
                 trusty: true
             }).fetch('GET', APIURL, {
@@ -411,9 +358,8 @@ class FormBasedSurvey extends Component {
             })
                 .then((response) => response.json())
                 .then((responseJson) => {
-                    console.log('exp', responseJson, PausedData);
+                    console.log('Survey details==>>', responseJson, PausedData);
                     if (responseJson.status == 'ok') {
-                        ValidationTracker = 0
                         GroupProperty = responseJson.result.groupProperties;
                         ValidationProperties = responseJson.result.validationProperties;
                         this.SurveyAnswer = responseJson.result.questionnaire.section;
@@ -439,7 +385,6 @@ class FormBasedSurvey extends Component {
                     }
                 }).catch((error) => {
                     if ('errors', error) {
-                        // this.Logout()
                         this.setState({ loader: false })
                     }
                 });
@@ -453,6 +398,7 @@ class FormBasedSurvey extends Component {
         }
         this.setState({ Survey: array })
     }
+
     GoFromTextBox(data, id) {
         let flag = true
         if (id == 0) {
@@ -468,7 +414,6 @@ class FormBasedSurvey extends Component {
                 flag = false
             }
         }
-        console.log(this.QuestionStack, '&&&&&&&&&&&&&&text&&&&&&&&&&&&&&&&&')
         if (flag) {
             this.isValid = 0
             this.onPressNext(0);
@@ -477,13 +422,12 @@ class FormBasedSurvey extends Component {
             this.setState({ inCompleteRespose: 0 })
         }
     }
+
     GetTextBoxCard(question, id) {
-        console.log('GetTextBoxCard==', question)
         if (question.subQuestion !== undefined) {
             QuestionType = 'textbox'
             this.setState({ Question: question })
         } else {
-            console.log('IntegerTextBox')
             QuestionType = 'IntegerTextBox'
             this.setState({ Question: question })
         }
@@ -501,6 +445,7 @@ class FormBasedSurvey extends Component {
             }
         }
     }
+
     GetCheckBoxFrom(data) {
         let flag = false
         for (let i = 0; i < data.length; i++) {
@@ -509,7 +454,6 @@ class FormBasedSurvey extends Component {
                 break;
             }
         }
-        console.log(this.QuestionStack, '&&&&&&&&&&&&&&checkxt&&&&&&&&&&&&&&&&&')
         if (flag) {
             this.isValid = 0
             this.onPressNext(0);
@@ -518,6 +462,7 @@ class FormBasedSurvey extends Component {
             this.setState({ inCompleteRespose: 0 })
         }
     }
+
     GetCheckBoxCard(question) {
         QuestionType = 'checkbox'
         this.setState({ Question: question })
@@ -525,6 +470,7 @@ class FormBasedSurvey extends Component {
             this.GetCheckBoxFrom(question.response)
         }
     }
+
     GetRadioFrom(VarName) {
         let flag = true
         var res = this.UserSurveyResponse[VarName.attributes.varName]
@@ -532,24 +478,16 @@ class FormBasedSurvey extends Component {
         } else {
             flag = false
         }
-        console.log(breakLoop, NextRadioQ, NextQuestion, secondLoop, VarName.attributes.varName, '=====hh radio========', this.UserSurveyResponse[VarName.attributes.varName], flag, NextQuestion)
-        console.log(this.QuestionStack, '&&&&&&&&&&&&&&tRadio ext&&&&&&&&&&&&&&&&&')
         if (flag) {
-            console.log("t&1----333----3&&&&&&&&&")
             this.isValid = 0
-            // if (breakLoop == 0) {
             this.onPressNext(0);
-            // }
         } else {
-            // breakLoop = 1
             this.isValid = -1
             this.setState({ inCompleteRespose: 0 })
-            // , () => {
             this.setState({ loader: false })
-            // })
-            console.log("t--3&&&&&&&&&")
         }
     }
+
     GetRadioButtonCard(question, len) {
         if (question.subQuestion !== undefined) {
             if (currentQuestion !== NextQuestion) {
@@ -560,7 +498,6 @@ class FormBasedSurvey extends Component {
             CurrentNextRadioQ = NextRadioQ
             NextRadioQ = NextRadioQ + 1;
             QuestionType = 'radio'
-            console.log('NextRadioQ + question.subQuestion.length, --NextQuestion', NextQuestion, NextRadioQ, question.subQuestion.length)
             this.setState({ Question: question })
             if (question.subQuestion.length - 1 === NextRadioQ) {
                 loopFlag = 0;
@@ -571,7 +508,6 @@ class FormBasedSurvey extends Component {
                 flag = 1;
                 this.TrackNextPrev = NextQuestion
             }
-            console.log(' --NextQuestion len - 1 === NextRadioQ', NextQuestion, NextRadioQ, len, this.state.inCompleteRespose)
             if (this.state.inCompleteRespose == 1) {
                 this.GetRadioFrom(question.subQuestion[NextRadioQ])
             }
@@ -594,12 +530,11 @@ class FormBasedSurvey extends Component {
             }
         }
     }
-    buttonClickded = () => {
-        // QuestionType = 'X'
+
+    buttonClicked = () => {
         this.isComplete = 1
         this.setState({ SurveyStatus: 1 })
         if (this.state.Internet) {
-            // this.ModalText = 'Do you want to save the response? You are currently offline. Your responses will be saved locally and submitted when you have internet connection.'
             this.ModalText = 'You have filled the survey. Do you want to save this survey?'
             this.setState({ OfflineModal: false })
             this.setState({ ModalVisibleStatus: true })
@@ -609,20 +544,17 @@ class FormBasedSurvey extends Component {
             this.setState({ OfflineModal: true })
         }
     };
+
     onPressNext(idx) {
-        // this.CheckConnectivity();
-        console.log('onPressNext=====>>>>', idx, NextQuestion)
         this.TrackNextPrev1 = this.TrackNextPrev1 + 1
         if (idx == 1) {
             NextQuestion++;
         }
         goBackWord = 0
         if (SurveyLength === NextQuestion) {
-            this.buttonClickded()
+            this.buttonClicked()
             return 0;
         }
-
-        console.log('last=====', NextQuestion, secondLoop, NextRadioQ, this.isValid)
         this.AnsArray = [{}]
         if (QuestionType === 'dropdown') {
             this.GoFromDropDown()
@@ -635,9 +567,6 @@ class FormBasedSurvey extends Component {
                 return;
             }
             this.setState({ ErrorWarning: 0 })
-            // if (QuestionType === 'dropdown') {
-            //     this.GoFromDropDown()
-            // }
             errorCode = 0;
             if (flag === 1) {
                 NextRadioQ = -1;
@@ -662,7 +591,6 @@ class FormBasedSurvey extends Component {
             }
             this.isValid = -1
             this.push(OB);
-            console.log('next--***********NextQuestion TOTOTO', NextQuestion, OB)
             currentQuestion = NextQuestion;
             this.GetQuestion(this.SurveyAnswer, NextQuestion)
         }
@@ -672,6 +600,7 @@ class FormBasedSurvey extends Component {
         }
         this.NextPrevToggle = 1
     }
+
     onPressPrev() {
         if (this.QuestionStack.length < 1) {
             return 0;
@@ -679,9 +608,7 @@ class FormBasedSurvey extends Component {
         goBackWord = 1
         var PopData = null;
         PopData = this.pop()
-        console.log('pop===>>>>11', PopData);
         this.setState({ inCompleteRespose: 0 })
-
         currentQuestion = PopData.currentQuestion;
         if (this.BreakPoint == currentQuestion) {
             PopData = this.pop()
@@ -702,34 +629,28 @@ class FormBasedSurvey extends Component {
         } else {
             secondLoop = PopData.secondLoop;
         }
-        // secondLoop = PopData.CurrentSecondLoop;
         currentLoop = PopData.currentLoop;
         loopFlag = PopData.loopFlag;
         SubQStatus = PopData.SubQStatus;
         goBack = PopData.goBack;
         flag = PopData.flag;
-        console.log('stack=p===>>>>22', PopData, this.QuestionStack, NextQuestion);
         this.TrackNextPrev = NextQuestion
         this.GetQuestion(this.SurveyAnswer, NextQuestion)
         this.isValid = 0
         this.TrackNextPrev1 = this.TrackNextPrev1 - 1
         this.NextPrevToggle = 2
     }
+
     GetQuestion(QuestionsSection, nextNumber) {
         let j = 0
         var type = ""
         SubQStatus = loopFlag;
         QuestionID = QuestionsSection[nextNumber].attributes.id
-        // console.log('loooooopppppppp', GroupProperty, QuestionsSection, nextNumber);
         var FilteredOB = GroupProperty.find(item => item.gid == QuestionsSection[nextNumber].attributes.id)
-        // console.log('loooooopppppppp', FilteredOB);
         if (FilteredOB !== undefined && FilteredOB !== null) {
             this.SectionImage = FilteredOB.image
             this.Surveytitle = FilteredOB.group_name
-            // console.log('loooooopppppppp==>', this.Surveytitle);
         }
-        // console.log('loooooopppppppp==', FilteredOB, nextNumber);
-        // console.log('looo=', QuestionsSection[nextNumber]);
         if (QuestionsSection.length > 0) {
             if (QuestionsSection[nextNumber] !== undefined) {
                 if (QuestionsSection[nextNumber].question === undefined) {
@@ -737,7 +658,6 @@ class FormBasedSurvey extends Component {
                     this.isValid = 0;
                     secondLoop = -1;
                     NextRadioQ = -1
-                    console.log('Text=', NextQuestion);
                     if (QuestionsSection[nextNumber].input_type === "Text display") {
                         QuestionType = "Text display"
                         if (QuestionsSection[nextNumber].sectionInfo.length >= 2) {
@@ -750,30 +670,20 @@ class FormBasedSurvey extends Component {
                 }
             }
         }
-        // console.log('looo=', breakLoop);
-        // for (let i = 0; i < QuestionsSection.length; i++) {
-        // if (breakLoop == 1) {
-        //     breakLoop = 0;
-        //     break;
-        // }
+        
         let i = nextNumber
         if (QuestionsSection.length > 0) {
             if (QuestionsSection[i].question !== undefined) {
-                console.log("NextQuestion------======" + NextQuestion + "---NextQuestion***");
                 if (QuestionsSection[i].question.length <= 1 && i === nextNumber) {
-
                     firstLoop = i;
                     secondLoop = -1;
                     CurrentSecondLoop = secondLoop
                     type = QuestionsSection[i].question[0].input_type;
                     if (type == undefined) {
                         if (NextQuestion < SurveyLength - 1) {
-                            // goBack = 1
                             this.onPressNext(1)
-                            // break;
                         } else {
-                            this.buttonClickded();
-                            // break;
+                            this.buttonClicked();
                         }
                     }
                     QType = type;
@@ -785,14 +695,11 @@ class FormBasedSurvey extends Component {
                         this.GetCheckBoxCard(QuestionsSection[i].question[j])
                     } else if (type === 'radio') {
                         QLength = 0;
-                        RadioLength = QuestionsSection[i].question[0].subQuestion.length
                         this.GetRadioButtonCard(QuestionsSection[i].question[0], QuestionsSection[i].question[0].subQuestion.length)
                     }
-                    // break;
                 } else {
                     if (QuestionsSection[i].question.length > 1 && i === nextNumber) {
                         CurrentSecondLoop = secondLoop
-                        console.log('secondLoop ,firstLoop , i', secondLoop, firstLoop, i)
                         if (firstLoop !== i) {
                             secondLoop = -1;
                             firstLoop = i;
@@ -808,22 +715,14 @@ class FormBasedSurvey extends Component {
                             NextRadioQ = -1;
                         }
                         for (j = 0; j < QuestionsSection[i].question.length; j++) {
-                            console.log("seco---****** hhhhh", NextQuestion, secondLoop, NextRadioQ, "--=NextQuestion, secondLoop, NextRadioQ======");
-                            // console.log('breakLoop', breakLoop)
-                            // if (breakLoop == 1) {
-                            //     breakLoop = 0;
-                            //     break;
-                            // }
                             if (secondLoop === j) {
                                 type = QuestionsSection[i].question[j].input_type;
-                                console.log('secondLoop, j, type***', secondLoop, j, type, i)
                                 if (type == undefined) {
-                                    // goBack = 1
                                     if (NextQuestion < SurveyLength - 1) {
                                         this.onPressNext(1)
                                         break;
                                     } else {
-                                        this.buttonClickded();
+                                        this.buttonClicked();
                                         break;
                                     }
                                 }
@@ -834,11 +733,6 @@ class FormBasedSurvey extends Component {
                                         secondLoop = -1;
                                         this.TrackNextPrev = NextQuestion
                                     }
-                                    // else{
-                                    //     secondLoop++;
-                                    // }
-                                    // this.setState({ QuestionType: 'textbox' })
-                                    // QuestionType = 'textbox'
                                     QLength = QuestionsSection[i].question.length
                                     this.GetTextBoxCard(QuestionsSection[i].question[j], 1)
                                 } else if (type === 'checkbox') {
@@ -847,30 +741,23 @@ class FormBasedSurvey extends Component {
                                         secondLoop = -1;
                                         this.TrackNextPrev = NextQuestion
                                     }
-                                    // this.setState({ QuestionType: 'checkbox' })
-                                    // QuestionType = 'checkbox'
                                     QLength = QuestionsSection[i].question.length
                                     this.GetCheckBoxCard(QuestionsSection[i].question[j])
                                 } else if (type === 'radio') {
                                     QLength = QuestionsSection[i].question.length
-                                    console.log('QuestionsSection[i].question.length - 1 === secondLoop', QuestionsSection[i].question.length - 1, secondLoop, NextQuestion)
                                     if (QuestionsSection[i].question[j].subQuestion !== undefined) {
                                         if (QuestionsSection[i].question[j].subQuestion.length - 1 === NextRadioQ + 1) {
                                             if (QuestionsSection[i].question.length - 1 === secondLoop) {
                                                 NextQuestion++;
-                                                // secondLoop = -1;
-                                                // NextRadioQ = -1;
                                                 this.TrackNextPrev = NextQuestion
                                             }
                                         }
                                     } else {
                                         if (QuestionsSection[i].question.length - 1 === secondLoop) {
                                             NextQuestion++;
-                                            // secondLoop = -1;
                                             this.TrackNextPrev = NextQuestion
                                         }
                                     }
-
                                     if (QuestionsSection[i].question[j].subQuestion !== undefined) {
                                         if (QuestionsSection[i].question[j].subQuestion.length - 1 === NextRadioQ + 1) {
                                             SubQStatus = 5;
@@ -884,7 +771,6 @@ class FormBasedSurvey extends Component {
                                     } else {
                                         loopFlag = 0;
                                     }
-                                    console.log('QuestionsSection[i].question[j], -5', QuestionsSection[i].question[j], NextRadioQ, NextQuestion)
                                     this.GetRadioButtonCard(QuestionsSection[i].question[j], -5)
                                 }
                                 break;
@@ -894,7 +780,6 @@ class FormBasedSurvey extends Component {
                 }
             }
         }
-        // }
     }
 
     SaveSurvey() {
@@ -913,13 +798,13 @@ class FormBasedSurvey extends Component {
         }
         formBody.push('response' + "=" + JSON.stringify(app.UserSurveyResponse));
         formBody = formBody.join("&");
-        console.log('body===', formBody)
         AsyncStorage.setItem(
             'PatientOffSurvey',
             formBody
         );
         this.props.navigation.navigate('TakeSurvey');
     }
+
     submitChat1() {
         let app = this
         this.setState({ YesLoader: true })
@@ -935,28 +820,11 @@ class FormBasedSurvey extends Component {
             let encodedValue = encodeURIComponent(details[property]);
             formBody.push(encodedKey + "=" + encodedValue);
         }
-        console.log(app.UserSurveyResponse, 'UserSurveyResponse')
         formBody.push('response' + "=" + JSON.stringify(app.UserSurveyResponse));
-        console.log('user-response', formBody)
         formBody = formBody.join("&");
-        console.log('body===>>', formBody)
-        // console.log('URL===>>', 'http://stage-manager.worddiagnostics.com/api/submit-response?clientId=' + app.client_id)
         AsyncStorage.getItem('SurveyAuthToken').then((value) => {
             var token = 'Bearer ' + value
             let url = API + 'submit-response?clientId=' + app.client_id
-            console.log('Bearer-token-->', token)
-            // fetch('http://stage-manager.worddiagnostics.com/api/submit-response?clientId=' + app.client_id, {
-            //     method: 'POST',
-            //     headers: {
-            //         'Authorization': token,
-            //         'Cache-Control': 'no-cache',
-            //         'Accept': 'application/json',
-            //         'Content-Type': 'application/x-www-form-urlencoded'
-            //     },
-            //     body: formBody
-            // }).then((response) => response.json())
-            //     .then((responseData) => {
-
             RNFetchBlob.config({
                 trusty: true
             }).fetch('POST', url, {
@@ -968,7 +836,6 @@ class FormBasedSurvey extends Component {
                 .then((response) => response.json())
                 .then((responseData) => {
                     console.log(responseData, 'response');
-                    // this.SaveSurvey();
                     if (responseData.status == 'ok') {
                         if (this.isComplete == 0) {
                             Toast.show("This Survey's partial response has been submitted successfully!", Toast.LONG);
@@ -993,11 +860,9 @@ class FormBasedSurvey extends Component {
     GetDataFromComponent(e) {
         let app = this;
         const { isValid, jumpFlag, inCompleteRespose, UserSurveyResponseP } = e
-        console.log('=GetDataFromC====omponent=ee---', e)
         if (isValid === 0) {
             app.isValid = 0
             errorCode = 0
-            // app.UserSurveyResponse = UserSurveyResponseP
             if (inCompleteRespose == 1) {
                 this.onPressNext(0)
             }
@@ -1010,20 +875,18 @@ class FormBasedSurvey extends Component {
             app.isValid = -1
         }
     }
+
     GetRadioDataFromComponent(e) {
         let app = this;
-        console.log('==GetRadioDataFromComponentee', e, NextRadioQ, NextQuestion)
         const { isValid, inCompleteRespose, check, UserSurveyResponseP } = e
         if (isValid === 0) {
             app.isValid = 0
             if (inCompleteRespose == 1) {
                 this.onPressNext(0)
-                console.log('0-->')
             }
             errorCode = 0
             app.setState({ ErrorWarning: 0 })
             if (check !== 0) {
-                console.log('1-->')
                 app.UserSurveyResponse = UserSurveyResponseP
                 setTimeout(() => app.onPressNext(0), 500)
             }
@@ -1031,9 +894,9 @@ class FormBasedSurvey extends Component {
             app.isValid = -1
         }
     }
+
     GetIntegerInputData(e) {
         let app = this;
-        console.log('==GetIntegerInputDataee int----', e, NextRadioQ)
         const { isValid, jumpFlag, inCompleteRespose, UserSurveyResponseP, status } = e
         app.ValidationStatus = status
         if (isValid === 0) {
@@ -1051,10 +914,10 @@ class FormBasedSurvey extends Component {
             app.isValid = -1
         }
     }
+
     GetCheckData(e) {
         let app = this;
         const { isValid, jumpFlag, inCompleteRespose, UserSurveyResponseP } = e
-        console.log('==checkbox data', e)
         if (isValid === 0) {
             app.isValid = 0
             errorCode = 0
@@ -1070,6 +933,7 @@ class FormBasedSurvey extends Component {
             app.isValid = -1
         }
     }
+
     GoFromDropDown() {
         let flag = true;
         if (this.state.inCompleteRespose == 1) {
@@ -1086,6 +950,7 @@ class FormBasedSurvey extends Component {
             this.isValid = 0
         }
     }
+
     DisplayTextNext(e) {
         const { isValid, inCompleteRespose } = e
         if (isValid == 0) {
@@ -1095,29 +960,31 @@ class FormBasedSurvey extends Component {
             }
         }
     }
+
     onChangeTextPress(Dropdown) {
         var VarName = this.state.Question.response
         this.UserSurveyResponse[VarName.attributes.varName] = Dropdown;
         this.isValid = 0;
-        // QuestionType = 'X'
         setTimeout(() => this.onPressNext(0), 800)
     }
+
     ShowModalFunction(visible) {
         this.setState({ ModalVisibleStatus: visible, YesLoader: false });
     }
+
     ShowModalFunction1(visible) {
         this.setState({ OfflineModal: visible });
     }
+
     HeaderGoBack() {
         this.handleBackButton();
     }
+
     DropDown(data, VarName) {
-        console.log('==', data, 'dataa=====')
         VarName = this.UserSurveyResponse[VarName]
         if (VarName == null) {
             VarName = ""
         }
-        console.log('==', VarName, 'dataa=====')
         return (
             <View style={styles.container}>
                 <View
@@ -1128,34 +995,18 @@ class FormBasedSurvey extends Component {
                         <View>
                             <Text
                                 style={[styles.customStyle1, {
-                                    // fontSize: 20,
                                     padding: 5,
                                     color: '#000',
                                     fontWeight: '600'
                                 }]}
                             ><Text
                                 style={[styles.customStyle1, {
-                                    // fontSize: 20,
                                     color: 'red',
                                     fontWeight: '600'
                                 }]}
                             >*</Text>{this.state.Question.text}</Text>
-
                         </View>
                     </View>
-                    {/* {this.SectionImage.length > 0 ? <View style={{
-                        flex: 1, marginTop: 20,
-                    }}>
-                        <ScrollView
-                            horizontal={true}
-                            showsHorizontalScrollIndicator={false}
-                        >
-                            {this.SectionImage.map((item, index) => {
-                                return <QuestionImage imageUri={item}
-                                    key={index} />
-                            })}
-                        </ScrollView>
-                    </View> : null} */}
                     {this.state.ErrorWarning > 0 ?
                         <View
                             style={styles.QuestionStyle1}
@@ -1193,18 +1044,7 @@ class FormBasedSurvey extends Component {
         )
     }
     translationData(v) {
-        console.log(v, 'translationData', QuestionType)
         let Words = []
-        // this.setState({ TranslationDataArray: v })
-        // let wordSum = ''
-        // v.map(item => {
-        //     if (item.alternatives) {
-        //         item.alternatives.map(ev => {
-        //             wordSum = wordSum + ev.transcript
-        //         })
-        //     }
-        // })
-        // console.log('wordSum', wordSum)
         if (v) {
             if (v.length > 0) {
                 if (QuestionType === 'textbox' || QuestionType === 'IntegerTextBox') {
@@ -1224,10 +1064,10 @@ class FormBasedSurvey extends Component {
                 }
             }
         }
-        console.log('Words', Words)
         this.setState({ TranslationDataArray: Words })
         this.setState({ ErrorMessage: '', ErrorStatus: false })
     }
+
     ErrorAlert(v) {
         this.setState({ ErrorMessage: '', ErrorStatus: false }, () => {
             if (v) {
@@ -1235,13 +1075,15 @@ class FormBasedSurvey extends Component {
             }
         })
     }
+
     OnSpeechLoader(v) {
         this.setState({ SpeechLoader: v })
     }
+
     ListeningMethod(e) {
         this.setState({ isListening: e })
-        console.log('ListeningMethod', e)
     }
+
     render() {
         const barWidth = Dimensions.get('screen').width - 30;
         const barWidth1 = 20;
@@ -1253,12 +1095,10 @@ class FormBasedSurvey extends Component {
             if (this.state.Question.response.fixed.category.length > 0) {
                 data = this.state.Question.response.fixed.category;
                 VarName = this.state.Question.response.attributes.varName
-                console.log('=====d', this.state.Question)
             } else {
                 data = []
             }
         }
-        console.log(app.size(), '############======================================= size', 'errorCode', errorCode)
         if (app.state.QuestionsSection.length > 0) {
             percentage = Math.ceil((100 * (NextQuestion)) / app.state.QuestionsSection.length)
             if (percentage > 100) {
@@ -1287,12 +1127,6 @@ class FormBasedSurvey extends Component {
                     <Header HeaderGoBack={() => app.HeaderGoBack()} title={app.Surveytitle}></Header>
                     <StatusBar backgroundColor='#43CC53' barStyle="light-content" />
                     {this.state.ErrorStatus ? <ErrorAlerts message={this.state.ErrorMessage}></ErrorAlerts> : null}
-                    {/* <ScrollView> */}
-                    {/* <KeyboardAvoidingView
-                        behavior="padding"
-                        // resetScrollToCoords={{ x: 0, y: 0 }}
-                        // scrollEnabled={true}
-                    > */}
                     <KeyboardAwareScrollView
                         keyboardShouldPersistTaps='handled'
                         enableAutomaticScroll={true}
@@ -1300,7 +1134,6 @@ class FormBasedSurvey extends Component {
                         <View
                         >
                             <View style={styles.ProgressBar}>
-
                                 <ProgressBarAnimated
                                     width={barWidth}
                                     borderWidth={2}
@@ -1326,17 +1159,16 @@ class FormBasedSurvey extends Component {
                             {QuestionType === 'checkbox' ?
                                 <CheckboxCard SectionImage={app.SectionImage} UserSurveyResponse={app.UserSurveyResponse} ErrorWarning={errorCode} inCompleteRespose={this.state.inCompleteRespose} PushTextDataToObject={(e) => app.GetCheckData(e)} Question={app.state.Question} NextRadioQ={NextRadioQ} NextQuestion={currentQuestion} secondLoop={secondLoop}></CheckboxCard> : null}
                             {QuestionType === 'dropdown' ?
-                                // <DropDownCard UserSurveyResponse={app.UserSurveyResponse} ErrorWarning={errorCode} PushTextDataToObject={(e) => app.GetDropdownData(e)} Question={app.state.Question} NextRadioQ={NextRadioQ} NextQuestion={currentQuestion} secondLoop={secondLoop}></DropDownCard> 
                                 this.DropDown(data, VarName) : null}
                             {QuestionType === 'Text display' ?
                                 <DisplayTextComponent NextQuestion={currentQuestion} inCompleteRespose={this.state.inCompleteRespose} PushTextDataToObject={(e) => app.DisplayTextNext(e)} DisplayText={app.state.DisplayText} ></DisplayTextComponent> : null}
                         </View>
                     </KeyboardAwareScrollView>
                     {this.state.isListening ? <View style={styles.listeningStyle}>
-                        <Text style={{ fontSize: 18, color: '#1E887B', fontFamily: Fonts.Roboto, fontWeight:'600' }}>Speak</Text>
+                        <Text style={{ fontSize: 18, color: '#1E887B', fontFamily: Fonts.Roboto, fontWeight: '600' }}>Speak</Text>
                     </View> : null}
                     {this.state.SpeechLoader ? <View style={styles.listeningStyle}>
-                        <Text style={{ fontSize: 18, color: '#1E887B', fontFamily: Fonts.Roboto, paddingRight: 5,fontWeight:'600' }}>Analyzing speech</Text>
+                        <Text style={{ fontSize: 18, color: '#1E887B', fontFamily: Fonts.Roboto, paddingRight: 5, fontWeight: '600' }}>Analyzing speech</Text>
                         <DotsLoader color={"#F00"} size={15} />
                     </View> : null}
                     {this.state.HideFooter ? <View style={[styles.footer]}>
@@ -1428,8 +1260,8 @@ class FormBasedSurvey extends Component {
         }
     }
 }
+
 const mapStateToProps = state => {
-    console.log('----------', state);
     return {
         SurveyRedux: state.SurveyRedux,
     };
@@ -1441,7 +1273,9 @@ const mapDispatchToProps = dispatch => (
         ReTake
     }, dispatch)
 );
+
 export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(FormBasedSurvey))
+
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#f1f2f7',
@@ -1458,11 +1292,8 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     ModalButtonStyle: {
-        // flex: 1,
-        // width: '100%',
         flexDirection: 'row',
         justifyContent: 'center',
-        // backgroundColor: '#ccc'
         justifyContent: 'space-around',
         marginBottom: 10
     },
@@ -1484,12 +1315,9 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
-        // backgroundColor: '#fff',
         flexDirection: 'row',
         height: 50,
         alignItems: 'center',
-        // borderTopWidth: 1,
-        // borderTopColor: '#ccc',
     },
     bottomButtons: {
         alignItems: 'center',
@@ -1549,7 +1377,6 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        // backgroundColor: '#eeeeee',
     },
     ErrorText: {
         backgroundColor: '#fff',
@@ -1559,15 +1386,11 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         fontSize: 16,
         color: '#f00',
-        // marginVertical: 15
     },
     button1: {
         height: 50,
         flex: 1,
-        // backgroundColor: '#009688',
         justifyContent: 'center',
-        // width: 300,
-        // margin: 20,
         marginLeft: 10,
         marginRight: 10,
         borderRadius: 5,
@@ -1577,7 +1400,6 @@ const styles = StyleSheet.create({
         height: 70,
         justifyContent: 'flex-end',
         alignItems: 'flex-end',
-        // justifyContent: 'center',
         paddingVertical: 10,
         marginVertical: 0,
         marginLeft: 0,
@@ -1591,7 +1413,6 @@ const styles = StyleSheet.create({
     },
     QuestionStyle: {
         flex: 1,
-        // width: '100%',
         margin: 20,
         alignItems: 'center',
         paddingRight: 10,
@@ -1618,10 +1439,8 @@ const styles = StyleSheet.create({
     button: {
         flex: 1,
         height: 50,
-        // backgroundColor: '#009688',
         borderColor: '#f00',
         borderRadius: 25,
-        // alignItems: 'center',
         justifyContent: 'center',
         marginLeft: 10
     },
@@ -1629,7 +1448,6 @@ const styles = StyleSheet.create({
     buttonYes: {
         flex: 0.3,
         width: 50,
-        // backgroundColor: '#616161',
         borderRadius: 5,
         marginVertical: 10,
         height: 35,
@@ -1655,26 +1473,12 @@ const styles = StyleSheet.create({
     pickerText: {
         color: 'green',
     },
-    // QuestionStyle: {
-    //     flex: 1,
-    //     marginLeft: 15,
-    //     marginRight: 15,
-    //     marginTop: 15,
-    //     // alignItems:'center',
-    //     paddingRight: 10,
-    //     paddingLeft: 10,
-    //     backgroundColor: '#eeeeee',
-    //     borderRadius: 5,
-    //     paddingVertical: 5,
-    //     fontSize: 18
-    // },
     ErrorText: {
         paddingVertical: 10,
         paddingLeft: 10,
         paddingRight: 10,
         fontSize: 16,
         color: '#f00',
-        // marginVertical: 15
     },
     QuestionStyle1: {
         flex: 1,
@@ -1684,22 +1488,17 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         backgroundColor: '#f1f2f7',
         paddingVertical: 5,
-        // fontSize: 18
     },
     MainContainer: {
-
-        // flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: (Platform.OS == 'ios') ? 20 : 0
 
     },
-
     ModalInsideView: {
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: "#FFFFFF",
-        // height: 200,
         width: '90%',
         borderRadius: 10,
         borderWidth: 1,
@@ -1709,7 +1508,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: "#FFFFFF",
-        // height: 200,
         width: '90%',
         borderRadius: 10,
         borderWidth: 1,

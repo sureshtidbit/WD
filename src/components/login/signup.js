@@ -2,27 +2,21 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
-  AsyncStorage,
   ActivityIndicator,
   YellowBox,
-  ScrollView,
   Image,
   TouchableOpacity,
   Text,
-  Keyboard,
   Platform,
   StatusBar
 } from 'react-native';
 import {
   withNavigation
 } from 'react-navigation';
-import axios from 'axios'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ActionUpdate } from '../../redux/surveyAction'
-import Toast from 'react-native-simple-toast';
-import { Row } from 'native-base';
 import { TextInput } from 'react-native-paper';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
@@ -30,6 +24,9 @@ import ErrorAlert from '../alertMessage/errorAlert'
 import RNFetchBlob from 'react-native-fetch-blob'
 import { API } from '../../auth/index'
 
+/*
+Sign up component for the new patient to register in the WD.
+*/
 class Signup extends Component {
   constructor(props) {
     super(props);
@@ -59,8 +56,11 @@ class Signup extends Component {
     this.ssn_number = null
     this.registeration_from_mobile = 1
   }
+
+  /*
+  Fields Text change handler
+  */
   OnChangeHandle(e, type) {
-    console.log(e, type)
     this.setState({ ValidEmail: "", ValidSSN: "", ErrorText: '' })
     switch (type) {
       case 1:
@@ -87,11 +87,13 @@ class Signup extends Component {
         this.confirm_password = e
         this.setState({ confirm_password_error: false })
         break;
-
     }
   }
+
+  /*
+  Sign up method to register a new patient
+  */
   SignupNew() {
-    // Keyboard.dismiss();
     var state = 0
     this.setState({ ValidEmail: "", ValidSSN: "", ErrorText: "" })
     if (!this.first_name) {
@@ -123,7 +125,6 @@ class Signup extends Component {
     }
 
     if (this.first_name && this.last_name && this.email && this.password && this.confirm_password && this.ssn_number) {
-
       var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       if (re.test(this.email)) {
         this.setState({ ValidEmail: "" })
@@ -135,9 +136,6 @@ class Signup extends Component {
         this.setState({ ErrorText: "The password and confirm password doesn't match" })
         return 0;
       }
-
-      console.log(re.test(this.email));
-
       var url = API + 'register'
       const details = {
         'first_name': this.first_name,
@@ -156,7 +154,6 @@ class Signup extends Component {
         formBody.push(encodedKey + "=" + encodedValue);
       }
       formBody = formBody.join("&");
-      console.log('form-body', formBody)
       RNFetchBlob.config({
         trusty: true
       }).fetch('POST', url, {
@@ -168,13 +165,9 @@ class Signup extends Component {
         .then((responseData) => {
           console.log('responseData', responseData)
           this.setState({ loader: false })
-          console.log(responseData, 'responseData')
           if (responseData.status === "ok") {
-            // Toast.show('This user has been registered successfully!', Toast.LONG);
-            console.log('1')
             this.props.ActionUpdate('This user has been registered successfully!')
             this.props.navigation.navigate('Login')
-            console.log('2')
           } else {
             this.setState({ loader: false })
             if (responseData.email) {
@@ -188,52 +181,16 @@ class Signup extends Component {
             }
           }
         }).catch(err => {
-          console.log('3', err)
           this.setState({ loader: false })
           this.setState({ ErrorAlertMSGStatus: true, ErrorAlertMSG: 'Oops, Internal server error, Try again later' })
         })
-      // fetch(url, {
-      //   method: 'POST',
-      //   headers: {
-      //     'Cache-Control': 'no-cache',
-      //     'Accept': 'application/json',
-      //     'Content-Type': 'application/x-www-form-urlencoded'
-      //   },
-      //   body: formBody
-      // }).then((response) => response.json())
-      //   .then((responseData) => {
-      //     this.setState({ loader: false })
-      //     console.log(responseData, 'responseData')
-      //     if (responseData.status === "ok") {
-      //       Toast.show('This user has been registered successfully!', Toast.SHORT);
-      //       console.log('1')
-      //       this.props.navigation.navigate('Login')
-      //       console.log('2')
-      //     } else {
-      //       this.setState({ loader: false })
-      //       if (responseData.email) {
-      //         this.setState({ ValidEmail: "This email is already exist!" })
-      //       }
-      //       if (responseData.ssn_number) {
-      //         this.setState({ ValidSSN: "This personnummer is not valid!" })
-      //       }
-      //       if (responseData.password) {
-      //         this.setState({ ErrorText: "The password must have at least 6 characters!" })
-      //       }
-      //     }
-      //   }).catch(err => {
-      //     console.log('3', err)
-      //     this.setState({ loader: false })
-      //     this.setState({ ErrorAlertMSGStatus: true, ErrorAlertMSG: 'Oops, Internal server error, Try again later' })
-      //   })
     }
   }
 
-
   GoBackToHome() {
-    console.log('dd')
     this.props.navigation.navigate('Login')
   }
+
   render() {
     let app = this;
     return (
@@ -242,11 +199,8 @@ class Signup extends Component {
         <KeyboardAwareScrollView
           enableAutomaticScroll={true}
           keyboardShouldPersistTaps='handled'
-        // showsVerticalScrollIndicator={false}
-        // contentContainerStyle={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
         >
           <StatusBar backgroundColor='#43CC53' barStyle="light-content" />
-
           <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
             <Ionicons
               onPress={() => this.GoBackToHome()}
@@ -352,9 +306,12 @@ class Signup extends Component {
         </KeyboardAwareScrollView>
       </View>
     )
-
   }
 }
+
+/*
+Redux store connection to this component
+*/
 const mapStateToProps = (state) => {
   return {
     SurveyRedux: state.SurveyRedux,
@@ -365,14 +322,13 @@ const mapDispatchToProps = dispatch => (
     ActionUpdate
   }, dispatch)
 );
+
 export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(Signup))
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#f1f2f7',
     flex: 1,
-    // alignItems: 'center',
-    // justifyContent: 'center'
   },
   inputBox: {
     width: 300,

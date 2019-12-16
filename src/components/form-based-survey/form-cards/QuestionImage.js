@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import {
     View,
-    Text,
-    StyleSheet,
     Image, Dimensions
 } from "react-native";
 
+/*
+Here display survey's questions images
+*/
 class QuestionImage extends Component {
-
     render() {
         const windowWidth = Dimensions.get('window').width;
         const windowHeight = Dimensions.get('window').height;

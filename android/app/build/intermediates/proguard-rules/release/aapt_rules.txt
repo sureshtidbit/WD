@@ -1,0 +1,106 @@
+# Referenced at /Users/macbook1/Desktop/NewWordDiagnostics/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:62
+-keep class com.facebook.react.devsupport.DevSettingsActivity { <init>(); }
+# Referenced at /Users/macbook1/Desktop/NewWordDiagnostics/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:128
+-keep class com.google.android.gms.common.api.GoogleApiActivity { <init>(); }
+# Referenced at /Users/macbook1/Desktop/NewWordDiagnostics/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:144
+-keep class com.google.android.gms.measurement.AppMeasurementInstallReferrerReceiver { <init>(); }
+# Referenced at /Users/macbook1/Desktop/NewWordDiagnostics/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:158
+-keep class com.google.android.gms.measurement.AppMeasurementJobService { <init>(); }
+# Referenced at /Users/macbook1/Desktop/NewWordDiagnostics/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:139
+-keep class com.google.android.gms.measurement.AppMeasurementReceiver { <init>(); }
+# Referenced at /Users/macbook1/Desktop/NewWordDiagnostics/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:154
+-keep class com.google.android.gms.measurement.AppMeasurementService { <init>(); }
+# Referenced at /Users/macbook1/Desktop/NewWordDiagnostics/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:75
+-keep class com.google.firebase.components.ComponentDiscoveryService { <init>(); }
+# Referenced at /Users/macbook1/Desktop/NewWordDiagnostics/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:119
+-keep class com.google.firebase.iid.FirebaseInstanceIdReceiver { <init>(); }
+# Referenced at /Users/macbook1/Desktop/NewWordDiagnostics/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:111
+-keep class com.google.firebase.messaging.FirebaseMessagingService { <init>(); }
+# Referenced at /Users/macbook1/Desktop/NewWordDiagnostics/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:133
+-keep class com.google.firebase.provider.FirebaseInitProvider { <init>(); }
+# Referenced at /Users/macbook1/Desktop/NewWordDiagnostics/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:89
+-keep class com.learnium.RNDeviceInfo.RNDeviceReceiver { <init>(); }
+# Referenced at /Users/macbook1/Desktop/NewWordDiagnostics/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:98
+-keep class com.reactnativecommunity.webview.RNCWebViewFileProvider { <init>(); }
+# Referenced at /Users/macbook1/Desktop/NewWordDiagnostics/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:35
+-keep class com.wdproject.MainActivity { <init>(); }
+# Referenced at /Users/macbook1/Desktop/NewWordDiagnostics/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:27
+-keep class com.wdproject.MainApplication { <init>(); }
+# Referenced at /Users/macbook1/Desktop/NewWordDiagnostics/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:27
+-keep class com.wdproject.androidx { <init>(); }
+# Referenced at /Users/macbook1/Desktop/NewWordDiagnostics/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:74
+-keep class io.invertase.firebase.messaging.RNFirebaseBackgroundMessagingService { <init>(); }
+# Referenced at /Users/macbook1/Desktop/NewWordDiagnostics/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:69
+-keep class io.invertase.firebase.messaging.RNFirebaseInstanceIdService { <init>(); }
+# Referenced at /Users/macbook1/Desktop/NewWordDiagnostics/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:64
+-keep class io.invertase.firebase.messaging.RNFirebaseMessagingService { <init>(); }
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_alert_dialog_title_material.xml:56
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_alert_dialog_material.xml:52
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_alert_dialog_button_bar_material.xml:43
+-keep class android.widget.Space { <init>(...); }
+
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_select_dialog_material.xml:23
+-keep class androidx.appcompat.app.AlertController$RecycleListView { <init>(...); }
+
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_action_menu_item_layout.xml:17
+-keep class androidx.appcompat.view.menu.ActionMenuItemView { <init>(...); }
+
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_expanded_menu_layout.xml:17
+-keep class androidx.appcompat.view.menu.ExpandedMenuView { <init>(...); }
+
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_popup_menu_item_layout.xml:17
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_list_menu_item_layout.xml:17
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_cascading_menu_item_layout.xml:20
+-keep class androidx.appcompat.view.menu.ListMenuItemView { <init>(...); }
+
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_screen_toolbar.xml:27
+-keep class androidx.appcompat.widget.ActionBarContainer { <init>(...); }
+
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_screen_toolbar.xml:43
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_action_mode_bar.xml:19
+-keep class androidx.appcompat.widget.ActionBarContextView { <init>(...); }
+
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_screen_toolbar.xml:17
+-keep class androidx.appcompat.widget.ActionBarOverlayLayout { <init>(...); }
+
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_action_menu_layout.xml:17
+-keep class androidx.appcompat.widget.ActionMenuView { <init>(...); }
+
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_activity_chooser_view.xml:19
+-keep class androidx.appcompat.widget.ActivityChooserView$InnerLayout { <init>(...); }
+
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_alert_dialog_material.xml:18
+-keep class androidx.appcompat.widget.AlertDialogLayout { <init>(...); }
+
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_alert_dialog_button_bar_material.xml:26
+-keep class androidx.appcompat.widget.ButtonBarLayout { <init>(...); }
+
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_screen_content_include.xml:19
+-keep class androidx.appcompat.widget.ContentFrameLayout { <init>(...); }
+
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_alert_dialog_title_material.xml:45
+-keep class androidx.appcompat.widget.DialogTitle { <init>(...); }
+
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_screen_simple_overlay_action_mode.xml:23
+-keep class androidx.appcompat.widget.FitWindowsFrameLayout { <init>(...); }
+
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_screen_simple.xml:17
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_dialog_title_material.xml:22
+-keep class androidx.appcompat.widget.FitWindowsLinearLayout { <init>(...); }
+
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_search_view.xml:75
+-keep class androidx.appcompat.widget.SearchView$SearchAutoComplete { <init>(...); }
+
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_screen_toolbar.xml:36
+-keep class androidx.appcompat.widget.Toolbar { <init>(...); }
+
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_screen_simple_overlay_action_mode.xml:32
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_screen_simple.xml:25
+-keep class androidx.appcompat.widget.ViewStubCompat { <init>(...); }
+
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/8245a13d4dae3974ade94653870a2381/res/layout/browser_actions_context_menu_page.xml:5
+-keep class androidx.browser.browseractions.BrowserActionsFallbackMenuView { <init>(...); }
+
+# Referenced at /Users/macbook1/.gradle/caches/transforms-2/files-2.1/e5ebd43160fd12aee7c2cdd019868a5a/res/layout/abc_alert_dialog_material.xml:41
+-keep class androidx.core.widget.NestedScrollView { <init>(...); }
+

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>logFormatVersion</key>
+	<integer>10</integer>
+	<key>logs</key>
+	<dict>
+		<key>12E686FA-3D0D-40FA-A772-399179334D0F</key>
+		<dict>
+			<key>className</key>
+			<string>IDECommandLineBuildLog</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>12E686FA-3D0D-40FA-A772-399179334D0F.xcactivitylog</string>
+			<key>hasPrimaryLog</key>
+			<true/>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>W</string>
+			</dict>
+			<key>schemeIdentifier-containerName</key>
+			<string>WordDiagnosticsApp project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>WordDiagnosticsApp</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Building workspace WordDiagnosticsApp with scheme WordDiagnosticsApp and configuration Debug</string>
+			<key>timeStartedRecording</key>
+			<real>597567986.68610001</real>
+			<key>timeStoppedRecording</key>
+			<real>597567995.22352004</real>
+			<key>title</key>
+			<string>Building workspace WordDiagnosticsApp with scheme WordDiagnosticsApp and configuration Debug</string>
+			<key>uniqueIdentifier</key>
+			<string>12E686FA-3D0D-40FA-A772-399179334D0F</string>
+		</dict>
+		<key>D7570B8C-FE9B-4998-B690-3F4BC803DE71</key>
+		<dict>
+			<key>className</key>
+			<string>IDECommandLineBuildLog</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>D7570B8C-FE9B-4998-B690-3F4BC803DE71.xcactivitylog</string>
+			<key>hasPrimaryLog</key>
+			<true/>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>W</string>
+			</dict>
+			<key>schemeIdentifier-containerName</key>
+			<string>WordDiagnosticsApp project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>WordDiagnosticsApp</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Building workspace WordDiagnosticsApp with scheme WordDiagnosticsApp and configuration Debug</string>
+			<key>timeStartedRecording</key>
+			<real>597563246.42259097</real>
+			<key>timeStoppedRecording</key>
+			<real>597563284.78326297</real>
+			<key>title</key>
+			<string>Building workspace WordDiagnosticsApp with scheme WordDiagnosticsApp and configuration Debug</string>
+			<key>uniqueIdentifier</key>
+			<string>D7570B8C-FE9B-4998-B690-3F4BC803DE71</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

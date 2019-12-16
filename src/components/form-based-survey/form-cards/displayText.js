@@ -6,6 +6,9 @@ import {
 } from 'react-native';
 import { Fonts } from '../../../utils/fonts'
 
+/*
+Display only text of the survey question
+*/
 export default class IntegerTextInputCard extends Component {
     constructor() {
         super();
@@ -14,6 +17,10 @@ export default class IntegerTextInputCard extends Component {
             DisplayText: 0,
         }
     }
+
+    /*
+    Check whether survey needs to be fill or not
+    */
     CheckCompletion(inCompleteRespose){
         if(inCompleteRespose == 1){
             this.props.PushTextDataToObject({isValid: 0, inCompleteRespose: 1});
@@ -21,11 +28,13 @@ export default class IntegerTextInputCard extends Component {
             this.props.PushTextDataToObject({isValid: 0, inCompleteRespose: 0});
         }
     }
+
     componentDidMount() {
         this.setState({ DisplayText: this.props.DisplayText })
         this.setState({ QNumber: this.props.NextQuestion })
         this.CheckCompletion(this.props.inCompleteRespose)
     }
+
     shouldComponentUpdate(nextProps, nextState) {
         if (
             this.props.DisplayText !== nextProps.DisplayText) {
@@ -38,25 +47,21 @@ export default class IntegerTextInputCard extends Component {
     }
 
     render() {
-
         var firstQ = (
             <Text
                 style={[styles.customStyle,{
-                    // fontSize: 20,
                     padding: 5,
                     color: '#000',
                     fontWeight: '600'
                 }]}
             ><Text
                 style={[styles.customStyle,{
-                    // fontSize: 20,
                     color: 'red',
                     fontWeight: '600'
                 }]}
             >*</Text>{this.state.DisplayText}</Text>
         )
         return (
-
             <View style={styles.container}>
                 <View
                 >
@@ -86,7 +91,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#f1f2f7',
         borderRadius: 5,
         paddingVertical: 5,
-        // fontSize: 18
     },
     customStyle: {
         fontFamily: Fonts.Roboto,

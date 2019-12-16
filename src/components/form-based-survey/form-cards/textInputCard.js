@@ -4,22 +4,20 @@ import {
     Text,
     View,
     TextInput,
-    Alert,
     TouchableOpacity,
     ScrollView
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import QuestionImage from './QuestionImage'
 import Feather from 'react-native-vector-icons/Feather';
-
 import { Fonts } from '../../../utils/fonts'
-var QData = [];
 var TextValidationArray = [];
 var TextErrorWarning = 0
-var Flag = 0;
-var FinalFlag = -1;
 var UserSurveyResponseP = {}
-var AutoFocusIndex = 0
+
+/*
+Display text input survey's questions here
+*/
 export default class TextInputCard extends Component {
     constructor() {
         super();
@@ -47,6 +45,7 @@ export default class TextInputCard extends Component {
         this.TextInputFocusArray = []
         this.ConcatWordsArray = []
     }
+
     GetUserResponseObject(len, data, inCompleteRespose) {
         var isValid = 0
         var validation = []
@@ -69,6 +68,7 @@ export default class TextInputCard extends Component {
         }
         this.setState({ AutoFocused: 0 })
     }
+
     AutoFillTranslationData(len, data, inCompleteRespose, WordsArray) {
         var isValid = 0
         var validation = []
@@ -85,9 +85,7 @@ export default class TextInputCard extends Component {
             for (let i = 0; i < DataLength; i++) {
                 FilteredWords[i] = FilteredWords[i].replace(regex, '');
             }
-            console.log('remove comma', FilteredWords, FilteredWords.length, this.ConcatWordsArray, this.ConcatWordsArray.length)
         }
-        console.log('33', this.ConcatWordsArray.length)
         if (this.ConcatWordsArray.length == 0) {
             this.ConcatWordsArray = FilteredWords
         } else {
@@ -104,7 +102,6 @@ export default class TextInputCard extends Component {
                 }
             }
         }
-        console.log('this.ConcatWordsArray==>>', this.ConcatWordsArray, FilteredWords)
         for (let x = 0; x < this.ConcatWordsArray.length; x++) {
             let i = x%len
             validation[i] = false
@@ -136,16 +133,15 @@ export default class TextInputCard extends Component {
             this.props.PushTextDataToObject({ isValid, inCompleteRespose: 0, UserSurveyResponseP })
         }
         this.setState({ AutoFocused: Math.random() + Math.random() })
-        console.log('UserSurveyResponseP---->>>>>', isValid, inCompleteRespose, TextValidationArray, UserSurveyResponseP)
     }
 
     componentWillMount() {
         UserSurveyResponseP = this.props.UserSurveyResponse
     }
+
     componentDidMount() {
         AutoFocu = 0
         this.ConcatWordsArray = []
-        console.log('propfff====', this.props)
         TextValidationArray = []
         UserSurveyResponseP = this.props.UserSurveyResponse
         this.GetUserResponseObject(this.props.Question.subQuestion.length, this.props.Question.subQuestion, this.props.inCompleteRespose)
@@ -153,24 +149,21 @@ export default class TextInputCard extends Component {
         this.setState({ ErrorWarning: this.props.ErrorWarning })
         this.setState({ AutoFocused: 0 })
         if (this.props.Question !== null) {
-            console.log('UserSurveyResponse==', UserSurveyResponseP)
             this.setState({ Question: this.props.Question })
             this.questionText = this.props.Question.text
             this.setState({ QNumber: this.props.NextQuestion })
             this.setState({ SurveyAns: this.props.SurveyAns })
         }
-
     }
+
     shouldComponentUpdate(nextProps, nextState) {
         if (
             this.props.Question !== nextProps.Question || this.props.NextQuestion !== nextProps.NextQuestion || this.props.secondLoop !== nextProps.secondLoop) {
             TextValidationArray = []
             AutoFocu = 0
             this.ConcatWordsArray = []
-            console.log('propfff====', nextProps)
             UserSurveyResponseP = nextProps.UserSurveyResponse
             this.GetUserResponseObject(nextProps.Question.subQuestion.length, nextProps.Question.subQuestion, nextProps.inCompleteRespose)
-            console.log('UserSurveyResponse=next=', UserSurveyResponseP)
             this.setState({ Question: nextProps.Question })
             this.questionText = nextProps.Question.text
             this.setState({ QNumber: nextProps.NextQuestion })
@@ -185,14 +178,13 @@ export default class TextInputCard extends Component {
             return true;
         }
         if (this.props.TranslationDataArray != nextProps.TranslationDataArray) {
-            console.log('nextProps.TranslationDataArray=>>>text', this.props.TranslationDataArray, nextProps.TranslationDataArray)
             this.AutoFillTranslationData(nextProps.Question.subQuestion.length, nextProps.Question.subQuestion, nextProps.inCompleteRespose, nextProps.TranslationDataArray)
             return true;
         }
         return true;
     }
+
     ShowValidationError(error) {
-        console.log('=====****', error, UserSurveyResponseP, TextValidationArray)
         if (error > 0) {
             let i = 0
             for (i = 0; i < this.state.Question.subQuestion.length; i++) {
@@ -200,13 +192,14 @@ export default class TextInputCard extends Component {
                     TextValidationArray[i] = true
                 }
             }
-            console.log('=====****', error, UserSurveyResponseP, TextValidationArray)
             this.setState({ SurveyAns: 7 + Math.random() })
         }
     }
+
     ValidateWhiteSpace(text) {
         return /\s/g.test(text);
     }
+
     ValidationText = (text, id) => {
         var re = /^[a-zA-ZäöåÄÖÅ]+$/;
         if (id == 0) {
@@ -214,17 +207,16 @@ export default class TextInputCard extends Component {
         } else {
             return re.test(text);
         }
-
     }
+
     RemoveDataFromTheTextBox(index, varName) {
-        console.log(index, varName)
         UserSurveyResponseP[varName] = ""
         this.ConcatWordsArray[index] = ""
         this.setState({ Trigger: index + varName })
         var isValid = 1, jumpFlag = 0;
-        // this.TextInputFocusArray[index].focus()
         this.props.PushTextDataToObject({ isValid, jumpFlag, UserSurveyResponseP })
     }
+
     HandleTextChange(value, index, varName) {
         this.setState({ AutoFocused: index })
         AutoFocu = index
@@ -249,7 +241,6 @@ export default class TextInputCard extends Component {
                 isValid = 1
             }
         }
-        console.log('this.ValidateWhiteSpace(value)', this.ValidateWhiteSpace(value))
         var FieldsValueStatus = false
         var ValueStatus = false
         var FieldsValueStatus1 = true
@@ -268,7 +259,6 @@ export default class TextInputCard extends Component {
             }
         }
         isValid = 1
-        console.log('go next ==g', UserSurveyResponseP, FieldsValueStatus, FieldsValueStatus1, ValueStatus, ValueStatus1)
         this.setState({ SurveyAns: 9 })
         if (ValueStatus && ValueStatus1) {
             jumpFlag = 0
@@ -299,8 +289,8 @@ export default class TextInputCard extends Component {
         }
         this.props.PushTextDataToObject({ isValid, jumpFlag, UserSurveyResponseP })
     }
+
     OnSubmitData(index) {
-        console.log('index111', index)
         let length = 0
         if (this.state.Question.subQuestion.length > 0) {
             length = this.state.Question.subQuestion.length
@@ -313,23 +303,18 @@ export default class TextInputCard extends Component {
     }
 
     render() {
-        console.log('ErrorWarning1111', this.state.ErrorWarning, this.state.Question)
         var firstQ = (
             <Text
                 style={[styles.customStyle1, {
-                    // fontSize: 20,
                     padding: 5,
                     color: '#000',
                     fontWeight: '600',
-                    // lineHeight: 1.5
                 }]}
             >
                 <Text
                     style={[styles.customStyle1, {
-                        // fontSize: 20,
                         color: 'red',
                         fontWeight: '600',
-                        // lineHeight: 1.5
                     }]}
                 >*</Text>
                 {this.questionText}</Text>
@@ -337,22 +322,18 @@ export default class TextInputCard extends Component {
         if (this.state.Question) {
             if (this.state.Question.subQuestion.length > 0) {
                 var firstOptionQ = this.state.Question.subQuestion.map((item, index) => {
-                    // console.log(this.state.AutoFocused,AutoFocu, index)
                     return <View key={index}
                         style={styles.checkBoxQ}
                     >
                         <Text
                             style={[styles.customStyle, {
-                                // fontSize: 16,
                                 padding: 5,
                                 color: '#000',
-                                // fontWeight: '400'
                             }, TextValidationArray[index] ? styles.Validateerror1 : null]}
                         >{item.text}</Text>
                         <TextInput style={[styles.input, styles.customStyle, TextValidationArray[index] ? styles.Validateerror : null]}
                             underlineColorAndroid="transparent"
                             placeholder=""
-                            // autoFocus={0 == index}
                             placeholderTextColor="#757575"
                             autoCapitalize="none"
                             ref={(input) => this.TextInputFocusArray[index] = input}
@@ -362,13 +343,8 @@ export default class TextInputCard extends Component {
                         />
                         <TouchableOpacity
                             style={{
-                                // borderWidth: 1,
-                                // borderColor: 'rgba(0,0,0,0.2)',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                // width: 30,
-                                // height: 30,
-                                // position:'absolute',
                                 top: -20,
                                 left: -15,
                                 backgroundColor: '#DDD',
@@ -382,7 +358,6 @@ export default class TextInputCard extends Component {
                 })
             }
         }
-
         return (
 
             <View style={styles.container}>
@@ -454,12 +429,10 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     input: {
-        // margin: 15,
         marginLeft: 15,
         marginTop: 15,
         marginBottom: 15,
         height: 45,
-        // fontSize: 16,
         paddingLeft: 10,
         borderColor: '#9e9e9e',
         borderWidth: 2,
@@ -469,30 +442,24 @@ const styles = StyleSheet.create({
     checkBoxQ: {
         alignItems: 'center',
         flexDirection: 'row',
-
         width: wp('100%')
     },
-
     QuestionStyle: {
         flex: 1,
         marginLeft: 15,
         marginRight: 15,
         marginTop: 15,
-        // alignItems: 'center',
         paddingRight: 10,
         paddingLeft: 10,
         backgroundColor: '#f1f2f7',
         borderRadius: 5,
         paddingVertical: 5,
-        // fontSize: 18
     },
     ErrorText: {
         paddingVertical: 10,
         paddingLeft: 10,
         paddingRight: 10,
-        // fontSize: 16,
         color: '#f00',
-        // marginVertical: 15
     },
     QuestionStyle1: {
         flex: 1,
@@ -502,7 +469,6 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         backgroundColor: '#f1f2f7',
         paddingVertical: 5,
-        // fontSize: 18
     },
     Validateerror: {
         borderColor: 'red',

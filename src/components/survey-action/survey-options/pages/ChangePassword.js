@@ -1,8 +1,6 @@
-//This is an example code for Bottom Navigation//
 import React, { Component } from 'react';
-//import react in our code.
-import { View,StatusBar, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
-import { Container, Content, Header, Left, Right, Body, Badge, Title, List, ListItem, Text, Icon, Button, Card, CardItem, Thumbnail } from 'native-base';
+import { View, StatusBar, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { Container, Header, Left, Right, Body, Title, Text, Icon, Button } from 'native-base';
 import {
   withNavigation
 } from 'react-navigation';
@@ -10,12 +8,10 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { TextInput } from 'react-native-paper';
 import { ActionUpdate } from '../../../../redux/surveyAction'
-import Toast from 'react-native-simple-toast';
 import { API } from '../../../../auth/index'
 import RNFetchBlob from 'react-native-fetch-blob'
 
 class ChangePassword extends React.Component {
-  //Detail Screen to show from any Open detail button
   constructor(props) {
     super(props);
     this.state = {
@@ -32,8 +28,11 @@ class ChangePassword extends React.Component {
     this.new_password = ""
     this.confirm_password = ""
   }
+
+  /*
+  Handle text changes
+  */
   OnChangeHandle(e, type) {
-    console.log(e, type)
     this.setState({ ConErrorText: "", OldErrorText: '', PassErrorText: '' })
     switch (type) {
       case 1:
@@ -48,9 +47,12 @@ class ChangePassword extends React.Component {
         this.confirm_password = e
         this.setState({ confirm_passwordError: false })
         break;
-
     }
   }
+
+  /*
+  Change password method
+  */
   ChangePasswordMethod() {
     var state = 0
     this.setState({ ConErrorText: "", OldErrorText: '', PassErrorText: '' })
@@ -73,7 +75,6 @@ class ChangePassword extends React.Component {
     if (state == 1) {
       return 0;
     }
-
     var url = API + 'change-password?clientId=' + this.props.SurveyRedux.client_id
     const details = {
       'old_password': this.old_password,
@@ -88,17 +89,6 @@ class ChangePassword extends React.Component {
       formBody.push(encodedKey + "=" + encodedValue);
     }
     formBody = formBody.join("&");
-    console.log('form-body', formBody)
-    // fetch(url, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Cache-Control': 'no-cache',
-    //     'Accept': 'application/json',
-    //     'Content-Type': 'application/x-www-form-urlencoded'
-    //   },
-    //   body: formBody
-    // }).then((response) => response.json())
-    //   .then((responseData) => {
     RNFetchBlob.config({
       trusty: true
     }).fetch('POST', url, {
@@ -111,11 +101,8 @@ class ChangePassword extends React.Component {
         this.setState({ loader: false })
         console.log(responseData, url, 'responseData')
         if (responseData.status === "ok") {
-          // Toast.show('Password changed successfully!', Toast.SHORT);
           this.props.ActionUpdate('Password changed successfully!')
-          console.log('1')
           this.props.navigation.replace('User')
-          console.log('2')
         } else {
           if (responseData.status === "failed") {
             if (responseData.old_password) {
@@ -130,9 +117,7 @@ class ChangePassword extends React.Component {
           }
           this.setState({ loader: false })
         }
-
       }).catch(err => {
-        console.log('3', err)
         this.setState({ loader: false })
       })
   }
@@ -154,17 +139,14 @@ class ChangePassword extends React.Component {
         <StatusBar backgroundColor='#43CC53' barStyle="light-content" />
         <View style={styles.container}>
           <ScrollView
-          keyboardShouldPersistTaps='handled'
+            keyboardShouldPersistTaps='handled'
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
           >
-
             <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-
               {this.state.ErrorStatus ? <View style={{ flexDirection: 'row', marginLeft: 25, marginRight: 25, marginTop: 5 }}>
                 <Text style={styles.ErrorText}>This personnummer doesn't exist!</Text>
               </View> : null}
-
               <View style={{ flexDirection: 'row', marginTop: 15, marginLeft: 25, marginRight: 25, marginBottom: 15, height: 50 }}>
                 <View style={{ flex: 1 }}>
                   <TextInput
@@ -222,6 +204,7 @@ class ChangePassword extends React.Component {
     );
   }
 }
+
 const mapStateToProps = (state) => {
   return {
     SurveyRedux: state.SurveyRedux,
@@ -232,20 +215,19 @@ const mapDispatchToProps = dispatch => (
     ActionUpdate
   }, dispatch)
 );
+
 export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(ChangePassword))
+
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#f1f2f7',
     flex: 1,
-    // alignItems: 'center',
-    // justifyContent: 'center'
   },
   TextStyle: {
     textAlign: 'center',
     fontSize: 16,
     color: '#43CC53',
     textDecorationLine: 'underline',
-    //line-through is the trick
   },
   ErrorText: {
     alignItems: 'center',

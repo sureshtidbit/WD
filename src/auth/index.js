@@ -3,7 +3,7 @@ const development = 'https://stage-manager.worddiagnostics.com/api/'
 const production = 'https://manager.worddiagnostics.com/api/'
 let mode = 'production'
 export const API = mode == 'production' ? production : development
-
+export const BankIDAPI = 'http://96.126.111.250:3091/'
 
 /*
 POST API with token

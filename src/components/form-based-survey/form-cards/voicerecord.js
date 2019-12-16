@@ -2,15 +2,18 @@ import React, { Component } from "react";
 import {
     View,
     Platform,
-    TouchableOpacity, Dimensions,
+    TouchableOpacity,
     Animated,
-    Easing,
     AsyncStorage
 } from "react-native";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { AudioRecorder, AudioUtils } from 'react-native-audio';
 import axios from 'axios'
 var APIURL = 'http://96.126.111.250:3090/'
+
+/*
+Handle google speech to text translation activities here
+*/
 class VoiceRecord extends Component {
     constructor() {
         super();
@@ -30,7 +33,7 @@ class VoiceRecord extends Component {
             increaseWidth: 25,
             Width: new Animated.Value(70),
             AudioFileName: '',
-            SelectedLanguage:'en-US'
+            SelectedLanguage: 'en-US'
         }
     }
     prepareRecordingPath(audioPath) {
@@ -43,6 +46,7 @@ class VoiceRecord extends Component {
             IncludeBase64: true
         });
     }
+
     callToast() {
         Animated.timing(
             this.animatedValue,
@@ -51,20 +55,20 @@ class VoiceRecord extends Component {
                 duration: 200
             }).start()
     }
+
     CheckLanguageCode() {
         AsyncStorage.getItem('WDLanguageCode').then((value) => {
-          console.log('WDLanguageCode', value)
-          if (value !== undefined && value !== null) {
-            this.setState({ SelectedLanguage: value })
-          }
+            if (value !== undefined && value !== null) {
+                this.setState({ SelectedLanguage: value })
+            }
         })
-      }
+    }
+
     componentDidMount() {
         this.CheckLanguageCode()
         this.animatedValue5 = new Animated.Value(1);
         this.callToast()
         AsyncStorage.getItem('SurveyPatientInfo').then((info) => {
-            console.log('info==>>', JSON.parse(info))
             if (info != undefined || info != null) {
                 var Info = JSON.parse(info)
                 let fileName = 'test' + Info.id
@@ -72,7 +76,7 @@ class VoiceRecord extends Component {
                 AudioRecorder.requestAuthorization().then((isAuthorised) => {
                     this.setState({ hasPermission: isAuthorised });
                     if (!isAuthorised) return;
-                    this.prepareRecordingPath(this.state.audioPath+'/'+fileName+ '.aac');
+                    this.prepareRecordingPath(this.state.audioPath + '/' + fileName + '.aac');
                     AudioRecorder.onProgress = (data) => {
                         this.setState({ currentTime: Math.floor(data.currentTime) });
                     };
@@ -84,16 +88,12 @@ class VoiceRecord extends Component {
                 });
             }
         })
-        // console.log(AudioUtils, 'AudioUtils')
-
     }
 
     GetSpeechText = async () => {
         let app = this
         let localAPI = 'http://127.0.0.1:3090/'
-        // app.props.translationData([])
-        axios.get(APIURL + 'speech'+'/'+app.state.AudioFileName+'?LanguageCode='+app.state.SelectedLanguage).then(function (response) {
-            console.log('==>> output', response)
+        axios.get(APIURL + 'speech' + '/' + app.state.AudioFileName + '?LanguageCode=' + app.state.SelectedLanguage).then(function (response) {
             console.warn('json==>>> output', response)
             app.props.onLoad(false)
             if (response.data.success) {
@@ -110,7 +110,6 @@ class VoiceRecord extends Component {
             app.props.onLoad(false)
             app.setState({ loader: false })
             app.props.ErrorAlert('Oops, Internal server error, Try again later')
-            console.warn('====>>>error>>>>', err, err.response)
         })
     }
 
@@ -118,15 +117,12 @@ class VoiceRecord extends Component {
         let app = this
         app.setState({ loader: true })
         const path = `file://${AudioUtils.CachesDirectoryPath}/${this.state.AudioFileName}.aac`
-        console.warn('path==>>', path)
-        console.log('==>>', path)
         const formData = new FormData()
         formData.append('file', {
             uri: path,
             name: this.state.AudioFileName,
             type: 'audio/aac',
         })
-        console.log('formData', formData)
         let localAPI = 'http://127.0.0.1:3090/'
         const config = {
             headers: {
@@ -138,9 +134,9 @@ class VoiceRecord extends Component {
                 "mimeType": "multipart/form-data",
             }
         };
-        axios.post(APIURL + 'upload'+'/'+app.state.AudioFileName, formData, config)
+        axios.post(APIURL + 'upload' + '/' + app.state.AudioFileName, formData, config)
             .then(response => {
-                console.log('resss', response)
+                console.log('response', response)
                 if (response.data.success) {
                     app.GetSpeechText()
                 } else {
@@ -152,9 +148,9 @@ class VoiceRecord extends Component {
                 app.props.onLoad(false)
                 app.setState({ loader: false })
                 app.props.ErrorAlert('Oops, Internal server error, Try again later')
-                console.log('error', errors)
             });
     }
+
     async _onPressOut() {
         let app = this
         Animated.spring(this.animatedValue5, {
@@ -164,7 +160,6 @@ class VoiceRecord extends Component {
         }).start()
         app.setState({ SpeakBackColor: '#FFF', SpeakIconColor: 'red', increaseWidth: 25 })
         if (!this.state.recording) {
-            console.warn('Can\'t stop, not recording!');
             return;
         }
         app.props.ListeningMethod(false)
@@ -173,49 +168,44 @@ class VoiceRecord extends Component {
             const filePath = await AudioRecorder.stopRecording();
             app.props.onLoad(true)
             app.uploadAudio()
-            // app.GetSpeechText()
             return filePath;
         } catch (error) {
-            console.warn('errors', error);
             app.props.ListeningMethod(false)
         }
     }
+
     AnimateButton() {
         Animated.spring(this.animatedValue5, {
             toValue: 1.5
         }).start()
     }
+
     async _onLongPress() {
         let app = this
-        console.log('22')
-        // app.GetSpeechText()
         app.setState({ SpeakBackColor: 'red', SpeakIconColor: '#FFF', increaseWidth: 45 }, () => {
             app.AnimateButton()
         })
         app.props.ListeningMethod(true)
         if (this.state.recording) {
-            console.warn('Already recording!');
             return;
         }
         if (!this.state.hasPermission) {
-            console.warn('Can\'t record, no permission granted!');
             return;
         }
         if (this.state.stoppedRecording) {
-            this.prepareRecordingPath(this.state.audioPath+'/'+this.state.AudioFileName+'.aac');
+            this.prepareRecordingPath(this.state.audioPath + '/' + this.state.AudioFileName + '.aac');
         }
         this.setState({ recording: true, paused: false });
         try {
             const filePath = await AudioRecorder.startRecording();
         } catch (error) {
-            console.error(error);
         }
     }
 
     _finishRecording(didSucceed, filePath, fileSize) {
         this.setState({ finished: didSucceed });
-        console.warn(`Finished recording of duration ${this.state.currentTime} seconds at path: ${filePath} and size of ${fileSize || 0} bytes`);
     }
+
     render() {
         const animatedStyle = {
             transform: [{ scale: this.animatedValue5 }]

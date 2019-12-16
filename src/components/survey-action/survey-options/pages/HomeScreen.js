@@ -11,11 +11,10 @@ import {
     YellowBox,
     ScrollView,
     ActivityIndicator,
-    Dimensions,
     StatusBar,
     Modal
 } from 'react-native';
-import { CheckBox, Container, Content, Left, Right, Icon, Text, List, ListItem, Radio, Body, Header } from 'native-base';
+import { Content, Left, Right, Icon, Text, List, ListItem, Header } from 'native-base';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import {
     withNavigation
@@ -23,23 +22,24 @@ import {
 import { Snackbar } from 'react-native-paper';
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import moment from 'moment'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { viewSurvey, surveyToken, ReTake, clientID, SavePendingSurvey } from '../../../../redux/surveyAction'
 import Toast from 'react-native-simple-toast';
-const { height } = Dimensions.get('window');
 import RNFetchBlob from 'react-native-fetch-blob'
-import { API, PostAPI, GetAPI } from '../../../../auth/index'
+import { API, GetAPI } from '../../../../auth/index'
 import { Fonts } from '../../../../utils/fonts'
 var track = 0
+
+/*
+Home Screen of the WD app, WHere display patient pending survey list.
+*/
 class HomeScreen extends Component {
     constructor() {
         super();
         YellowBox.ignoreWarnings(
             ['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader'
             ]);
-
         this.state = {
             checked: "3",
             PendingSurveyList: [],
@@ -55,6 +55,9 @@ class HomeScreen extends Component {
         }
     }
 
+    /*
+    Start the survey
+    */
     StartSurvey() {
         if (this.state.PendingSurveyList.length <= 0) {
             Toast.show('There is no pending survey!', Toast.SHORT);
@@ -64,46 +67,26 @@ class HomeScreen extends Component {
             Toast.show('Please select a survey', Toast.SHORT);
             return 0;
         }
-        if (this.state.checked === '1') {
-            this.props.navigation.navigate('ChatSurvey');
-        } else if (this.state.checked === '2') {
-            this.props.navigation.navigate('VoiceSurvey');
-        } else if (this.state.checked === '3') {
+        if (this.state.checked === '3') {
             this.props.navigation.navigate('FormSurvey');
         }
+    }
 
-    }
-    SurveyOptions(option) {
-        if (option === 1) {
-            this.setState({ checked: '1' })
-        } else if (option === 2) {
-            this.setState({ checked: '2' })
-        } else if (option === 3) {
-            this.setState({ checked: '3' })
-        }
-    }
     Logout() {
         AsyncStorage.removeItem('SurveyAuthToken');
         AsyncStorage.removeItem('SurveyPatientInfo');
         this.props.navigation.navigate('Login')
     }
-    // 'Authorization': token5,
+
+    /*
+    Display pending surveys
+    */
     PendingSurvey() {
         track = 0
         AsyncStorage.getItem('SurveyAuthToken').then((value) => {
             var token5 = 'Bearer ' + value
             let url = API + 'surveys?clientId=' + this.props.SurveyRedux.client_id
-            console.log(this.props.SurveyRedux.client_id, token5)
             this.setState({ token: token5 })
-            // fetch(, {
-            //     method: 'GET',
-            //     headers: {
-            //         // 'Cache-Control': 'no-cache',
-            //         'Accept': 'application/json',
-            //         'Content-Type': 'application/x-www-form-urlencoded'
-            //     },
-            // }).then((response) => response.json())
-            //     .then((responseData) => {
             RNFetchBlob.config({
                 trusty: true
             }).fetch('GET', url, {
@@ -114,14 +97,12 @@ class HomeScreen extends Component {
                 .then((response) => response.json())
                 .then((responseData) => {
                     AsyncStorage.getItem('SurveyPatientInfo').then((value) => {
-                        console.log(JSON.parse(value))
                         var info = JSON.parse(value)
                         this.props.clientID(info.id)
                     })
                     console.log("Pending Survey data===>", responseData)
                     if (responseData.status == 'ok') {
                         if (responseData.result !== undefined && responseData.result != null) {
-                            // this.setState({ PendingSurveyList: responseData.result })
                             if (responseData.result.length > 0) {
                                 let PendingSurveyList = []
                                 responseData.result.map((v, i) => {
@@ -142,8 +123,6 @@ class HomeScreen extends Component {
                             this.setState({ SurveyStatus: 1 })
                             this.setState({ PendingSurveyList: [] })
                         }
-
-                        // this.props.surveyToken(responseData.result[0].survey_token)
                     } else {
                         if (responseData.status === 'failed') {
                             this.Logout()
@@ -151,24 +130,15 @@ class HomeScreen extends Component {
                     }
                 })
         })
-
     }
+
+    /*
+    Submit save survey when internet is available
+    */
     submitChat(formBody) {
         AsyncStorage.getItem('SurveyAuthToken').then((value) => {
             var token = 'Bearer ' + value
             let url = API + 'submit-response?clientId=' + this.props.SurveyRedux.client_id
-            // fetch('http://stage-manager.worddiagnostics.com/api/submit-response?clientId=' + this.props.SurveyRedux.client_id, {
-            //     method: 'POST',
-            //     headers: {
-            //         'Authorization': token,
-            //         'Cache-Control': 'no-cache',
-            //         'Accept': 'application/json',
-            //         'Content-Type': 'application/x-www-form-urlencoded'
-            //     },
-            //     body: formBody
-            // }).then((response) => response.json())
-            //     .then((responseData) => {
-
             RNFetchBlob.config({
                 trusty: true
             }).fetch('POST', url, {
@@ -189,29 +159,34 @@ class HomeScreen extends Component {
                 })
         })
     }
+
+    /*
+    Check whether save survey exist or not
+    */
     SendStoreDataToBackedAPI() {
         AsyncStorage.getItem('PatientOffSurvey').then((value) => {
-            console.log(value, 'hi8888888888')
             if (value !== undefined && value !== null) {
                 this.submitChat(value)
             }
         })
     }
+
     APIMethods() {
         track = 0
         this.setState({ PendingSurveyList: [] });
         this.setState({ SurveyStatus: -1 })
-        console.log('===', this.props.SurveyRedux.pendingSurvey);
         this.SendStoreDataToBackedAPI()
         this.PendingSurvey();
     }
+    
+    /*
+    Check language
+    */
     CheckLanguageCode() {
         AsyncStorage.getItem('WDLanguageCode').then((value) => {
-            console.log('WDLanguageCode', value)
             if (value !== undefined && value !== null) {
                 var Codes = ["en-US", "sv-SE"];
                 var n = Codes.includes(value);
-                console.log('n n n ', n)
                 if (n) {
                     this.setState({ LanguageModal: false })
                 } else {
@@ -222,6 +197,7 @@ class HomeScreen extends Component {
             }
         })
     }
+
     SetLanguageCode() {
         let SelectedLanguage = this.state.SelectedLanguage
         let code = ''
@@ -233,21 +209,16 @@ class HomeScreen extends Component {
             }
         }
         AsyncStorage.setItem('WDLanguageCode', code)
-        this.setState({LanguageModal: false})
+        this.setState({ LanguageModal: false })
     }
+
     componentDidMount() {
         this.CheckLanguageCode()
-        var str = 'abc abc a, .aa ';
-
-        var regex = /[.,]/g;
-
-        var result = str.replace(regex, '');
-        console.log('result==>>', result)
-
         this.CheckConnectivity()
         NetInfo.addEventListener("connectionChange", this.handleConnectionChange);
         this.APIMethods()
     }
+
     ShowModalFunction(visible) {
         this.setState({ ModalVisibleStatus: visible });
     }
@@ -257,7 +228,6 @@ class HomeScreen extends Component {
             "connectionChange",
             this.handleFirstConnectivityChange
         );
-        console.log('isConnected1', isConnected)
         if (isConnected) {
             this.setState({ IsOnline: true, IsOffline: false })
             this.SendStoreDataToBackedAPI()
@@ -266,11 +236,14 @@ class HomeScreen extends Component {
             this.setState({ IsOnline: false, IsOffline: true, SurveyStatus: -5 })
         }
     };
+
+    /*
+    Handle internet connections
+    */
     CheckConnectivity = () => {
         // For Android devices
         if (Platform.OS === "android") {
             NetInfo.isConnected.fetch().then(isConnected => {
-                console.log(isConnected)
                 if (isConnected) {
                     this.setState({ IsOnline: true })
                     this.setState({ IsOffline: false })
@@ -278,7 +251,6 @@ class HomeScreen extends Component {
                     this.setState({ IsOffline: true, })
                     this.setState({ IsOnline: false, SurveyStatus: -5 })
                 }
-                // this.setState({ Internet: isConnected })
             });
         } else {
             // For iOS devices
@@ -287,7 +259,6 @@ class HomeScreen extends Component {
                 this.handleFirstConnectivityChange
             );
             NetInfo.isConnected.fetch().then(isConnected => {
-                console.log(isConnected)
                 if (isConnected) {
                     this.setState({ IsOnline: true })
                     this.setState({ IsOffline: false })
@@ -295,21 +266,20 @@ class HomeScreen extends Component {
                     this.setState({ IsOffline: true })
                     this.setState({ IsOnline: false, SurveyStatus: -5 })
                 }
-                // this.setState({ Internet: isConnected })
             });
         }
     };
+
     componentWillUnmount() {
         NetInfo.isConnected.removeEventListener(
             "connectionChange",
             this.handleConnectionChange
         );
     }
+
     handleConnectionChange = connectionInfo => {
-        console.log("connection info: ", connectionInfo);
         if (Platform.OS === "android") {
             NetInfo.isConnected.fetch().then(isConnected => {
-                console.log('isConnected2', isConnected)
                 if (isConnected) {
                     this.setState({ IsOnline: true, IsOffline: false })
                     this.SendStoreDataToBackedAPI()
@@ -330,6 +300,7 @@ class HomeScreen extends Component {
             );
         }
     };
+
     ClickOnList(item) {
         if (this.state.selectedIndex == item.idx) {
             this.setState({ selectedIndex: -1 })
@@ -340,28 +311,27 @@ class HomeScreen extends Component {
             this.props.ReTake(0)
         }
     }
+
     onContentSizeChange = (contentWidth, contentHeight) => {
-        // Save the content height in state
-        console.log('contentHeight', contentHeight)
         if (track < 2) {
             this.setState({ screenHeight: contentHeight });
             track++;
         }
     };
+
     Refresh() {
-        console.log('hi')
         this.setState({ SurveyName: '' })
         this.APIMethods()
-
     }
+
+    /*
+    Search surveys by the survey name
+    */
     SearchSurveysByName() {
-        console.log('33', API, this.state.SurveyName)
         let name = this.state.SurveyName
         this.setState({ SurveyStatus: -1 })
         AsyncStorage.getItem('SurveyAuthToken').then((value) => {
-            console.log('surveys?clientId=' + this.props.SurveyRedux.client_id + '&name=' + name, value)
             GetAPI('surveys?clientId=' + this.props.SurveyRedux.client_id + '&name=' + name, value).then(response => {
-                console.log(response, 'surveys?clientId=' + this.props.SurveyRedux.client_id + '&name=' + name)
                 if (response.result != null && response.result != undefined) {
                     if (response.result.length > 0) {
                         this.setState({ PendingSurveyList: response.result })
@@ -378,19 +348,17 @@ class HomeScreen extends Component {
             })
         })
     }
+
     OnChangeSearch(e) {
-        console.log(e)
         this.setState({ SurveyName: e })
     }
+
     ToggleLanguages(v) {
         this.setState({ SelectedLanguage: v })
     }
+
     render() {
-        var color = '#5C6BC0';
         let SelectedLanguage = this.state.SelectedLanguage
-        console.log('hiiiiiii', this.state.SurveyName, '22', track, this.props.SurveyRedux, this.state.screenHeight)
-        // let scrollEnabled = false
-        const scrollEnabled = this.state.screenHeight > 100;
         var DisplaySurveys = null
         if (this.state.PendingSurveyList.length > 0) {
             DisplaySurveys = this.state.PendingSurveyList.map((item, index) => {
@@ -415,9 +383,6 @@ class HomeScreen extends Component {
                             <Ionicons name={Platform == 'android' ? 'md-search' : 'ios-search'} color='#AAA' size={24} />
                         </TouchableOpacity>
                     </View>
-                    {/* <TouchableOpacity onPress={() => this.Refresh()} style={{justifyContent:'center',alignItems:'center', margin: 5, padding: 5}} >
-                        <Ionicons name={Platform == 'android' ? 'md-search' : 'ios-search'} color='green' size={24} />
-                    </TouchableOpacity> */}
                     <TouchableOpacity onPress={() => this.Refresh()} style={{ justifyContent: 'center', alignItems: 'center' }} >
                         <FontAwesome name={Platform == 'android' ? 'refresh' : 'refresh'} color='#43CC53' size={24} />
                     </TouchableOpacity>
@@ -425,33 +390,15 @@ class HomeScreen extends Component {
                 <StatusBar backgroundColor='#43CC53' barStyle="light-content" />
                 <View style={styles.container}>
                     <View style={styles.mainbody}>
-
-                        {/* <TouchableOpacity style={styles.CheckBoxStyle} onPress={() => this.SurveyOptions(1)}>
-                        {this.state.checked === '1' ? <Image style={{ width: 40, height: 40 }}
-                            source={require('../../../../images/ic_action_done.png')} /> : null}
-                        <Text style={styles.buttonText}>Chat Based Survey</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.CheckBoxStyle} onPress={() => this.SurveyOptions(2)}>
-                        {this.state.checked === '2' ? <Image style={{ width: 40, height: 40 }}
-                            source={require('../../../../images/ic_action_done.png')} /> : null}
-                        <Text style={styles.buttonText}>Voice Based Survey</Text>
-                    </TouchableOpacity> */}
                         <Image resizeMode='stretch' style={{ width: 150, height: 80 }}
                             source={require('../../../../images/logo1.png')} />
                         <Image resizeMode='stretch' style={{ width: 150, height: 30 }}
                             source={require('../../../../images/logo2.png')} />
                     </View>
-                    {/* <TouchableOpacity style={styles.CheckBoxStyle1} onPress={() => this.SurveyOptions(3)}>
-                    {this.state.checked === '3' ? <Image style={{ width: 40, height: 40 }}
-                        source={require('../../../../images/ic_action_done.png')} /> : null}
-                    <Text style={styles.buttonText}>Form Based Survey</Text>
-                </TouchableOpacity> */}
                     {this.state.PendingSurveyList.length > 0 ? <View style={[{ height: this.state.screenHeight > 200 ? 200 : this.state.screenHeight }, styles.ScrollViewStyle]}>
                         <ScrollView
-                            // style={styles.contentContainer}
                             showsHorizontalScrollIndicator={false}
                             showsVerticalScrollIndicator={true}
-                            // scrollEnabled={this.state.screenHeight>300? true: false}
                             onContentSizeChange={this.onContentSizeChange}
                         >
                             <List style={{ backgroundColor: '#f1f2f7' }}>
@@ -463,10 +410,6 @@ class HomeScreen extends Component {
                     {this.state.SurveyStatus == 1 ? <View style={{ fontSize: 16, alignItems: 'center', justifyContent: 'center' }}>
                         <Text>There is no survey to attempt.</Text>
                     </View> : null}
-
-                    {/* <TouchableOpacity onPress={() => this.StartSurvey()} style={styles.Startbutton}>
-                    <Text style={styles.buttonText}>Start Survey</Text>
-                </TouchableOpacity> */}
                     <TouchableOpacity style={styles.loginStyle} onPress={() => this.StartSurvey()}>
                         <Text style={styles.loginText}>Start Survey</Text>
                         <View style={styles.IconPositionStyle}>
@@ -495,7 +438,6 @@ class HomeScreen extends Component {
                         action={{
                             label: 'Ok',
                             onPress: () => {
-                                // Do something
                             },
                         }}
                         style={{ backgroundColor: '#f44336' }}
@@ -537,6 +479,7 @@ class HomeScreen extends Component {
         )
     }
 }
+
 const mapStateToProps = (state) => {
     return {
         SurveyRedux: state.SurveyRedux,
@@ -551,8 +494,8 @@ const mapDispatchToProps = dispatch => (
         ReTake
     }, dispatch)
 );
-export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(HomeScreen))
 
+export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(HomeScreen))
 
 const styles = StyleSheet.create({
     container: {
@@ -567,7 +510,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         flexDirection: 'column',
         paddingHorizontal: wp('5%'),
-
     },
     welcome: {
         flex: 1,
@@ -582,34 +524,18 @@ const styles = StyleSheet.create({
         color: 'green'
     },
     ScrollViewStyle: {
-        // width: '90%',
-        // height: '50%'
         minWidth: '85%',
-        // maxWidth: '80%',
-        // minHeight: '30%',
         marginTop: 10,
         borderWidth: 1,
         borderColor: '#ddd',
         borderRadius: 5
-        // maxHeight: '50%',
-        // backgroundColor: '#f00',
-    },
-    contentContainer: {
-        // margin:-10,
-        // height: '30%',
-        // backgroundColor: '#f00',
     },
     ModalInsideView: {
-        // justifyContent: 'center',
-        // alignItems: 'center',
         flexDirection: 'column',
         backgroundColor: "#FFF",
         height: 250,
         width: '90%',
         borderRadius: 5,
-        // borderWidth: 1,
-        // borderColor: '#ccc'
-
     },
     TextStyle: {
         fontSize: 18,
@@ -630,10 +556,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: 'rgba(255, 255,255,0.2)',
         paddingHorizontal: 25,
-        // width: 200
         width: wp('45%'),
         height: hp('8%'),
-        // height: 50,
         borderRadius: 50
     },
     CheckBoxStyle1: {
@@ -644,10 +568,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: 'rgba(255, 255,255,0.2)',
         paddingHorizontal: 25,
-        // width: 200
         width: wp('45%'),
         height: hp('8%'),
-        // height: 50,
         borderRadius: 50
     },
     CheckedStyle: {
@@ -655,12 +577,9 @@ const styles = StyleSheet.create({
     },
     logoText: {
         marginVertical: 40,
-        // fontSize: 28,
         fontSize: hp('4%'),
         color: '#fff'
     },
-
-
     Startbutton: {
         width: wp('40%'),
         height: hp('8%'),
@@ -669,10 +588,8 @@ const styles = StyleSheet.create({
         marginVertical: 20,
         alignItems: 'center',
         justifyContent: 'center',
-
     },
     buttonText: {
-        // fontSize: 18,
         fontSize: hp('2%'),
         fontWeight: '500',
         color: '#ffffff',
@@ -720,6 +637,5 @@ const styles = StyleSheet.create({
     IconPositionStyle: {
         position: 'absolute',
         right: 5
-        // paddingLeft: Platform.OS === 'ios' ? 210 : 200
     },
 });

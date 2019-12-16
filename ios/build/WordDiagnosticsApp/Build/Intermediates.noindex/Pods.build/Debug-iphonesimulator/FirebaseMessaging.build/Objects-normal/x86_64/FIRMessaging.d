@@ -1,0 +1,35 @@
+dependencies: \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/FirebaseMessaging/Firebase/Messaging/FIRMessaging.m \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/FirebaseMessaging/Firebase/Messaging/Public/FIRMessaging.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/FirebaseMessaging/Firebase/Messaging/FIRMessaging_Private.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/FirebaseMessaging/Firebase/Messaging/FIRMessagingAnalytics.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/Headers/Private/FirebaseAnalyticsInterop/FIRAnalyticsInterop.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/FirebaseMessaging/Firebase/Messaging/FIRMessagingClient.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/FirebaseMessaging/Firebase/Messaging/FIRMessagingConstants.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/FirebaseMessaging/Firebase/Messaging/FIRMessagingContextManagerService.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/FirebaseMessaging/Firebase/Messaging/FIRMessagingDataMessageManager.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/FirebaseMessaging/Firebase/Messaging/FIRMessagingDefines.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/FirebaseMessaging/Firebase/Messaging/Public/FIRMessagingExtensionHelper.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/FirebaseMessaging/Firebase/Messaging/FIRMessagingLogger.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/FirebaseMessaging/Firebase/Messaging/FIRMMessageCode.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/FirebaseMessaging/Firebase/Messaging/FIRMessagingPubSub.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/FirebaseMessaging/Firebase/Messaging/FIRMessagingReceiver.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/FirebaseMessaging/Firebase/Messaging/FIRMessagingRemoteNotificationsProxy.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/FirebaseMessaging/Firebase/Messaging/FIRMessagingRmqManager.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/FirebaseMessaging/Firebase/Messaging/FIRMessagingSyncMessageManager.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/FirebaseMessaging/Firebase/Messaging/FIRMessagingUtilities.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/FirebaseMessaging/Firebase/Messaging/FIRMessagingVersionUtilities.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/Headers/Private/FirebaseCore/FIRAppInternal.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/Headers/Private/FirebaseCore/FIRApp.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/Headers/Private/FirebaseCore/FIRErrors.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/Headers/Private/FirebaseCore/FIRErrorCode.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/Headers/Private/FirebaseCore/FIRComponent.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/Headers/Private/FirebaseCore/FIRComponentContainer.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/Headers/Private/FirebaseCore/FIRComponentType.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/Headers/Private/FirebaseCore/FIRLibrary.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/Headers/Private/FirebaseCore/FIRDependency.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/Headers/Private/FirebaseInstanceID/FirebaseInstanceID.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/Headers/Private/FirebaseInstanceID/FIRInstanceID.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/Headers/Private/GoogleUtilities/GULReachabilityChecker.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/Headers/Private/GoogleUtilities/GULUserDefaults.h \
+  /Users/macbook1/Desktop/NewWordDiagnostics/ios/Pods/FirebaseMessaging/Firebase/Messaging/NSError+FIRMessaging.h

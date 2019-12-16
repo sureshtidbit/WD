@@ -25,16 +25,16 @@ import { TextInput } from 'react-native-paper';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import axios from 'axios'
 import { NetworkInfo } from "react-native-network-info";
-import publicIP from 'react-native-public-ip';
 import { Post } from '../../auth/index'
 import ErrorAlert from '../alertMessage/errorAlert'
 import BackgroundTimer from "react-native-background-timer";
 const windowWidth = Dimensions.get('window').width;
-var BankIDLoginTimer = ''
-import {getUniqueId} from 'react-native-device-info';
 import firebase from 'react-native-firebase';
+import { BankIDAPI } from '../../auth/index'
 
-var APIURL = 'http://96.126.111.250:3091/'
+/*
+Swedish BankID login component
+*/
 class LoginWithBankID extends Component {
   constructor(props) {
     super(props);
@@ -51,85 +51,93 @@ class LoginWithBankID extends Component {
       ErrorAlertMSG: '',
       ErrorAlertMSGStatus: false,
       switchValue: false,
-      worddiagnostics_fcm_token:''
+      worddiagnostics_fcm_token: ''
     };
     this._interval = ''
     this.personnummer = ""
   }
+
+  /*
+  Store Auth token after login
+  */
   storeToken(token) {
     AsyncStorage.setItem(
       'SurveyAuthToken',
       token
     );
   }
+
   toggleSwitch = (value) => {
     this.setState({ switchValue: value })
   }
+
+  /*
+  Handle FCM token
+  */
   async getFCMToken() {
     let fcmToken = await AsyncStorage.getItem('worddiagnostics_fcm_token');
-    console.log("before fcmToken: ", fcmToken);
-    if(fcmToken){
-      this.setState({worddiagnostics_fcm_token: fcmToken})
+    if (fcmToken) {
+      this.setState({ worddiagnostics_fcm_token: fcmToken })
     }
     if (!fcmToken) {
-        fcmToken = await firebase.messaging().getToken();
-        console.log("----fcmToken: ", fcmToken);
-        if (fcmToken) {
-          this.setState({worddiagnostics_fcm_token: fcmToken})
-          AsyncStorage.setItem('worddiagnostics_fcm_token', fcmToken);
-            console.log("after fcmToken: ", fcmToken);
-        }
+      fcmToken = await firebase.messaging().getToken();
+      if (fcmToken) {
+        this.setState({ worddiagnostics_fcm_token: fcmToken })
+        AsyncStorage.setItem('worddiagnostics_fcm_token', fcmToken);
+        console.log("after fcmToken: ", fcmToken);
+      }
     }
-}
-async checkPermission() {
-    firebase.messaging().hasPermission()
-        .then(enabled => {
-            if (enabled) {
-                console.log("Permission granted", enabled);
-                 this.getFCMToken();
-            } else {
-                console.log("Request Permission");
-                this.requestPermission();
-            }
-        });
-}
+  }
 
-//2
-async requestPermission(auth_token) {
+  /*
+  Check user permissions for the notifications
+  */
+  async checkPermission() {
+    firebase.messaging().hasPermission()
+      .then(enabled => {
+        if (enabled) {
+          this.getFCMToken();
+        } else {
+          this.requestPermission();
+        }
+      });
+  }
+
+  async requestPermission(auth_token) {
     firebase.messaging().requestPermission()
-        .then(() => {
-            this.getFCMToken();
-        })
-        .catch(error => {
-            console.log('permission rejected');
-        });
-}
+      .then(() => {
+        this.getFCMToken();
+      })
+      .catch(error => {
+      });
+  }
+
   componentDidMount() {
     let app = this
     app.checkPermission()
-    // Get IPv4 IP (priority: WiFi first, cellular second)
     NetworkInfo.getIPV4Address().then(ipv4Address => {
-      console.log('getIPV4Address', ipv4Address);
       app.setState({ MyIPAddress: ipv4Address })
     });
   }
+
   OnChangeHandleNumber(e) {
     this.personnummer = e
     this.setState({ personnummerError: false, ErrorStatus: false })
   }
+
+  /*
+  Once any internal server errors occurs, cancel bankID login request
+  */
   CancelBankIDOrder(id) {
     let app = this
     AsyncStorage.getItem('orderRef').then((value) => {
       if (value) {
-        var url5 = APIURL + 'cancel/' + JSON.parse(value)
+        var url5 = BankIDAPI + 'cancel/' + JSON.parse(value)
         axios({
           method: 'GET',
           url: url5
         }).then(function (response) {
-          // clearInterval(this._interval);
           BackgroundTimer.clearInterval(this._interval);
-          // app.LoginAPI()
-
           if (id == 1) {
             app.setState({ ErrorAlertMSGStatus: false, ErrorAlertMSG: '', loader: false })
             app.setState({ ErrorAlertMSGStatus: true, ErrorAlertMSG: 'BankID server request timeout, Please try again' })
@@ -142,20 +150,10 @@ async requestPermission(auth_token) {
       }
     })
   }
-  CollectUserData(respond) {
-    fetch('http://96.126.111.250:3097/data', {
-      method: 'POST',
-      headers: {
-        'Cache-Control': 'no-cache',
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(respond)
-    }).then((response) => response.json())
-      .then((responseData1) => {
-        console.log('responseData1', responseData1)
-      })
-  }
+
+  /*
+  After bankDI login, Perform login with WD system
+  */
   LoginAction(personnummer, signature) {
     const details = {
       'ssn_number': personnummer,
@@ -168,17 +166,10 @@ async requestPermission(auth_token) {
       let encodedValue = encodeURIComponent(details[property]);
       formBody.push(encodedKey + "=" + encodedValue);
     }
-    // clearInterval(this._interval);
     BackgroundTimer.clearInterval(this._interval);
     formBody = formBody.join("&");
-    let respond = { response: JSON.stringify(formBody) }
-    this.CollectUserData(respond)
-    console.log(formBody, '33==>>')
     Post('login', formBody).then(responseData => {
       console.log(responseData, '44==>>')
-      let respond = { response: JSON.stringify(responseData) }
-      this.CollectUserData(respond)
-      // if (responseData.result != null && responseData.result != undefined) {
       if (responseData.status == 'ok') {
         this.props.clientID(responseData.result.patientInfo.id)
         this.storeToken(responseData.result.token)
@@ -189,19 +180,19 @@ async requestPermission(auth_token) {
         this.setState({ loader: false })
         AsyncStorage.removeItem('orderRef')
         this.props.navigation.navigate('TakeSurvey');
-        // } else {
-        //   this.setState({ loader: false })
-        //   this.setState({ ErrorAlertMSGStatus: true, ErrorAlertMSG: "This personnummer doesn't exist!" })
-        // }
       } else {
         this.setState({ loader: false })
         this.setState({ ErrorAlertMSGStatus: true, ErrorAlertMSG: responseData.message })
       }
     })
   }
+
+  /*
+  Get BankID login request order reference
+  */
   async getLoggedUserData(orderRef) {
     let app = this
-    var url5 = APIURL + 'collect/' + orderRef
+    var url5 = BankIDAPI + 'collect/' + orderRef
     axios({
       method: 'GET',
       url: url5
@@ -210,10 +201,7 @@ async requestPermission(auth_token) {
       if (response.data) {
         if (response.data.status) {
           if (response.data.status == "complete") {
-            // clearInterval(this._interval);
             BackgroundTimer.clearInterval(this._interval);
-            let respond = { response: JSON.stringify(response.data) }
-            app.CollectUserData(respond)
             app.LoginAction(response.data.completionData.user.personalNumber, response.data.completionData.signature)
           }
         }
@@ -225,22 +213,21 @@ async requestPermission(auth_token) {
         console.log(error);
         this.setState({ loader: false })
         this.setState({ ErrorAlertMSGStatus: true, ErrorAlertMSG: 'Oops, Internal server error, Try again later' })
-        let respond = { response: JSON.stringify(error) }
-        this.CollectUserData(respond)
       });
   }
+
+  /*
+  Open BankID app and send request for the login with the swedish BankID app
+  */
   LoginAPI() {
     let app = this
-    // app.LoginAction('')
-    // return 0;
     app.setState({ ErrorAlertMSGStatus: false, ErrorAlertMSG: '' })
     if (!app.personnummer) {
       app.setState({ personnummerError: true })
       return 0;
     }
     app.setState({ loader: true })
-    var url5 = APIURL + 'auth/' + app.personnummer + '/' + app.state.MyIPAddress
-    console.log(url5, 'url5')
+    var url5 = BankIDAPI + 'auth/' + app.personnummer + '/' + app.state.MyIPAddress
     axios({
       method: 'GET',
       url: url5
@@ -257,10 +244,6 @@ async requestPermission(auth_token) {
             'orderRef',
             JSON.stringify(response.data.orderRef)
           );
-          // timer.setInterval(this, 'TrackTimer', app.getLoggedUserData(response.data.orderRef), 1000);
-          // this._interval = setInterval(function () {
-          //   app.getLoggedUserData(response.data.orderRef)
-          // }, 1000)
           if (Platform.OS == "ios") {
             BackgroundTimer.start();
           }
@@ -275,13 +258,11 @@ async requestPermission(auth_token) {
           } else {
             url55 = 'https://app.bankid.com/?autostarttoken=' + response.data.autoStartToken + '&redirect=org.app.wdproject://';
           }
-          console.log('url55-r', url55)
           Linking.canOpenURL(url55)
             .then((supported) => {
               if (!supported) {
                 app.setState({ loader: false })
                 app.setState({ ErrorAlertMSGStatus: true, ErrorAlertMSG: 'Please make sure that you have already installed bankId app in your device' })
-                console.log("Can't handle url: " + url55);
                 app.CancelBankIDOrder(0)
               } else {
                 return Linking.openURL(url55);
@@ -299,19 +280,17 @@ async requestPermission(auth_token) {
     }).catch(err => {
       app.setState({ loader: false })
       app.setState({ ErrorAlertMSGStatus: true, ErrorAlertMSG: 'Oops, Internal server error, Try again later' })
-      console.log('fgefefe-eerrrrr', err)
-      let respond = { response: JSON.stringify(err) }
-      app.CollectUserData(respond)
     })
   }
 
   GoBackToHome() {
     this.props.navigation.navigate('Login')
   }
+
   componentWillUnmount() {
-    // clearInterval(this._interval);
     BackgroundTimer.clearInterval(this._interval);
   }
+
   render() {
     let app = this;
     return (
@@ -342,7 +321,7 @@ async requestPermission(auth_token) {
               <Text style={styles.ErrorText}>This personnummer doesn't exist!</Text>
             </View> : null}
 
-            <View style={{ flexDirection: 'row', marginTop: 15, marginLeft: 25+30, marginRight: 25+30, marginBottom: 15, height: 50 }}>
+            <View style={{ flexDirection: 'row', marginTop: 15, marginLeft: 25 + 30, marginRight: 25 + 30, marginBottom: 15, height: 50 }}>
               <View style={{ flex: 1 }}>
                 <TextInput
                   error={this.state.personnummerError}
@@ -356,7 +335,7 @@ async requestPermission(auth_token) {
               </View>
             </View>
             <View style={{ width: windowWidth }}>
-              <View style={{ flexDirection: 'row', marginTop: 25, marginLeft: 25, marginRight: 25, marginBottom: 15, justifyContent:'center', alignItems:'center' }}>
+              <View style={{ flexDirection: 'row', marginTop: 25, marginLeft: 25, marginRight: 25, marginBottom: 15, justifyContent: 'center', alignItems: 'center' }}>
                 <View style={{ position: 'absolute', left: 35 }}>
                   <Text style={{ fontSize: 16, fontWeight: '500', color: '#AAA' }}>Remember me</Text>
                 </View>
@@ -369,21 +348,24 @@ async requestPermission(auth_token) {
               </View>
             </View>
 
-            <TouchableOpacity onPress={() => this.LoginAPI()} disabled={this.state.loader} style={{ flexDirection: 'row', marginLeft: 25+30, marginRight: 25+30, marginTop: 15, marginBottom: 15, height: 50, backgroundColor: '#469CBE', borderColor: '#469CBE', borderWidth: 1, borderRadius: 5 }}>
+            <TouchableOpacity onPress={() => this.LoginAPI()} disabled={this.state.loader} style={{ flexDirection: 'row', marginLeft: 25 + 30, marginRight: 25 + 30, marginTop: 15, marginBottom: 15, height: 50, backgroundColor: '#469CBE', borderColor: '#469CBE', borderWidth: 1, borderRadius: 5 }}>
               <TouchableOpacity onPress={() => this.LoginAPI()} disabled={this.state.loader} style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 {!this.state.loader ? <Text style={{ fontSize: 16, fontWeight: '500', color: '#FFF' }}>Login with BankID app</Text> : <ActivityIndicator size="small" color="#FFF" />}
               </TouchableOpacity>
             </TouchableOpacity>
-            <TouchableOpacity style={{marginTop: 10}} onPress={() => this.GoBackToHome()}>
+            <TouchableOpacity style={{ marginTop: 10 }} onPress={() => this.GoBackToHome()}>
               <Text style={{ fontSize: 18, fontWeight: '500', color: '#AAA' }}>Change login method</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
       </View>
     )
-
   }
 }
+
+/*
+Redux store connection to this component
+*/
 const mapStateToProps = (state) => {
   return {
     SurveyRedux: state.SurveyRedux,
@@ -394,21 +376,19 @@ const mapDispatchToProps = dispatch => (
     clientID
   }, dispatch)
 );
+
 export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(LoginWithBankID))
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#f1f2f7',
     flex: 1,
-    // alignItems: 'center',
-    // justifyContent: 'center'
   },
   TextStyle: {
     textAlign: 'center',
     fontSize: 16,
     color: '#43CC53',
     textDecorationLine: 'underline',
-    //line-through is the trick
   },
   ErrorText: {
     alignItems: 'center',

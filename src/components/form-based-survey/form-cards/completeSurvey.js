@@ -1,13 +1,15 @@
 import React from 'react';
 import { StyleSheet, StatusBar,Text,AsyncStorage, View,ActivityIndicator, Platform, TouchableOpacity } from 'react-native';
 import { withNavigation } from 'react-navigation';
-import Ionicons from "react-native-vector-icons/Ionicons";
 import Header from '../../header/app_header';
 import { connect } from 'react-redux';
 import RNFetchBlob from 'react-native-fetch-blob'
 import {API} from '../../../auth/index'
 import { Fonts } from '../../../utils/fonts'
 
+/*
+Survey Complete screen
+*/
 class CompleteSurvey extends React.Component {
     constructor() {
         super();
@@ -20,6 +22,7 @@ class CompleteSurvey extends React.Component {
         this.isComplete = 1
         this.UserSurveyResponse ={}
     }
+
     componentDidMount(){
         var id = this.props.SurveyRedux.survey_id
         this.survey_id = id
@@ -27,23 +30,27 @@ class CompleteSurvey extends React.Component {
         this.client_id = this.props.SurveyRedux.client_id
         this.UserSurveyResponse = this.props.SurveyRedux.SurveyResponse
         console.log('survey is', id, this.props.SurveyRedux.client_id,this.survey_token,this.props.SurveyRedux.SurveyResponse)
-        // this.PendingSurvey(id, this.props.SurveyRedux.survey_token)
     }
+
     _GoToLogin() {
-        let app = this
         this.setState({loader: true})
-        // this.props.navigation.navigate('TakeSurvey')
         this.submitChat1()
     }
+
     HeaderGoBack() {
         let app = this
         this.props.navigation.navigate('TakeSurvey')
     }
+
     Logout() {
         AsyncStorage.removeItem('SurveyAuthToken');
         AsyncStorage.removeItem('SurveyPatientInfo');
         this.props.navigation.navigate('Login')
     }
+
+    /*
+    Submit Survey response to backend API
+    */
     submitChat1() {
         let app = this
         const details = {
@@ -58,25 +65,11 @@ class CompleteSurvey extends React.Component {
             let encodedValue = encodeURIComponent(details[property]);
             formBody.push(encodedKey + "=" + encodedValue);
         }
-        console.log(app.UserSurveyResponse, 'UserSurveyResponse')
         formBody.push('response' + "=" + JSON.stringify(app.UserSurveyResponse));
-        console.log('user-response', formBody)
         formBody = formBody.join("&");
-        console.log('body===', formBody)
         AsyncStorage.getItem('SurveyAuthToken').then((value) => {
             var token = 'Bearer ' + value
             let url =API+'delete-survey?clientId='+app.client_id
-            // fetch('http://stage-manager.worddiagnostics.com/api/delete-survey?clientId='+app.client_id, {
-            //     method: 'POST',
-            //     headers: {
-            //         'Authorization': token,
-            //         'Cache-Control': 'no-cache',
-            //         'Accept': 'application/json',
-            //         'Content-Type': 'application/x-www-form-urlencoded'
-            //     },
-            //     body: formBody
-            // }).then((response) => response.json())
-            //     .then((responseData) => {
                 RNFetchBlob.config({
                     trusty: true
                 }).fetch('POST', url, {
@@ -113,8 +106,7 @@ class CompleteSurvey extends React.Component {
                         Your response profile raises no concerns about mental illness and you therefore do not need to complete the survey as a whole.
                         </Text>
                         <Text style={[styles.customStyle,styles.TitleStyle]}>
-    If you feel that you are feeling mentally ill and that the survey failed to pay attention to this, please contact the treating staff at the reception for further assistance and support.
-    
+                        If you feel that you are feeling mentally ill and that the survey failed to pay attention to this, please contact the treating staff at the reception for further assistance and support.
                     </Text>
                     <TouchableOpacity onPress={() => this._GoToLogin()} style={{ flexDirection: 'row', marginLeft: 25, marginRight: 25, marginTop: 15, marginBottom: 15, height: 50, backgroundColor: 'rgba(67,204,83,1)', borderColor: '#43CC53', borderWidth: 1, borderRadius: 5 }}>
               <TouchableOpacity onPress={() => this._GoToLogin()} style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -126,18 +118,15 @@ class CompleteSurvey extends React.Component {
         );
     }
 }
-// export default withNavigation(CompleteSurvey);
+
+/*
+Redux store connection to this component
+*/
 const mapStateToProps = state => {
-    console.log('----------', state);
     return {
         SurveyRedux: state.SurveyRedux,
     };
 };
-// const mapDispatchToProps = dispatch => (
-//     bindActionCreators({
-//         CongratulationFlag
-//     }, dispatch)
-// );
 export default withNavigation(connect(mapStateToProps)(CompleteSurvey))
 
 const styles = StyleSheet.create({
@@ -146,12 +135,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFF',
         alignItems: 'center',
         marginTop: 30
-        // justifyContent: 'center',
     },
     TitleStyle: {
-        // fontSize: 18,
         color: '#000',
-        // fontFamily: 'sans-serif',
         paddingLeft: 30,
         paddingRight: 30,
     },
